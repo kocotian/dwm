@@ -1,0 +1,32 @@
+--- dwm.c
++++ dwm.c
+@@ -239,6 +241,7 @@ static void zoom(const Arg *arg);
+ /* variables */
+ static const char broken[] = "broken";
+ static char stext[256];
++static char estext[256];
+ static int screen;
+ static int sw, sh;           /* X display screen geometry width, height */
+ static int bh, blw = 0;      /* bar geometry */
+@@ -2010,8 +2034,20 @@ updatesizehints(Client *c)
+ void
+ updatestatus(void)
+ {
+-	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
++	char text[512];
++	if (!gettextprop(root, XA_WM_NAME, text, sizeof(text))) {
+ 		strcpy(stext, "dwm-"VERSION);
++		estext[0] = '\0';
++	} else {
++		char *e = strchr(text, statussep);
++		if (e) {
++			*e = '\0'; e++;
++			strncpy(estext, e, sizeof(estext) - 1);
++		} else {
++			estext[0] = '\0';
++		}
++		strncpy(stext, text, sizeof(stext) - 1);
++	}
+ 	drawbar(selmon);
+ }
+ 
