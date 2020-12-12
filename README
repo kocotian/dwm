@@ -19,6 +19,13 @@ necessary as root):
     make clean install
 
 
+Patches
+-------
+All patches are in patches directory, applied patches has additional
+executable permission (for readibility reasons - colored ls displays
+executables green).
+
+
 Running dwm
 -----------
 Add the following line to your .xinitrc to start dwm using startx:

@@ -14,9 +14,14 @@ static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_cyan[]        = "#005577";
 static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	/*                       fg         bg         border   */
+	[SchemeNorm]         = { col_gray3, col_gray1, col_gray2 },
+	[SchemeSel]          = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeStatus]       = { col_gray3, col_gray1, "#000000" }, /* Status */
+	[SchemeTagsSel]      = { col_gray4, col_cyan,  "#000000" }, /* Tagbar l selected   */
+	[SchemeTagsNorm]     = { col_gray3, col_gray1, "#000000" }, /* Tagbar l unselected */
+	[SchemeInfoSel]      = { col_gray3, col_gray1, "#000000" }, /* Infbar m selected   */
+	[SchemeInfoNorm]     = { col_gray3, col_gray1, "#000000" }, /* Infbar m unselected */
 };
 
 /* tagging */
@@ -29,12 +34,11 @@ static const Rule rules[] = {
 	 */
 	/* class              instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",             NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",          NULL,       NULL,       1 << 8,       0,           -1 },
 	{ "discord",          NULL,       NULL,       1 << 7,       0,           -1 },
-	{ "st-256color",      NULL,       NULL,       0,            0,           -1 },
+	{ "qutebrowser",      NULL,       NULL,       1 << 1,       0,           -1 },
+	{ "st-256color",      NULL,       NULL,       0 << 0,       0,           -1 },
 	{ "Pulseeffects",     NULL,       NULL,       1 << 8,       0,            1 },
 	{ "TelegramDesktop",  NULL,       NULL,       1 << 6,       0,           -1 },
-	{ "Microsoft Teams - Preview", NULL, NULL,    1 << 0,       0,            1 },
 };
 
 /* layout(s) */
@@ -47,6 +51,8 @@ static const Layout layouts[] = {
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
+	{ "TTT",      bstack },
+	{ "===",      bstackhoriz },
 };
 
 /* key definitions */
@@ -69,9 +75,12 @@ static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY,                       XK_q,      killclient,     {0} },
+	{ MODKEY|ShiftMask,             XK_r,      setcfact,       {.f =  0.00} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY|ShiftMask,             XK_t,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY|ShiftMask,             XK_y,      setlayout,      {.v = &layouts[3]} },
+	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[4]} },
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
 
@@ -80,8 +89,11 @@ static Key keys[] = {
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+	{ MODKEY|ShiftMask,             XK_h,      setcfact,       {.f = -0.25} },
+	{ MODKEY|ShiftMask,             XK_l,      setcfact,       {.f = +0.25} },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 
+	{ MODKEY,                       XK_z,      setlayout,      {0} },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
@@ -89,7 +101,6 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
 
 	{ MODKEY,                       XK_space,  zoom,           {0} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
