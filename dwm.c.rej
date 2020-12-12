@@ -1,23 +1,17 @@
 --- dwm.c
 +++ dwm.c
-@@ -654,6 +666,20 @@ createmon(void)
- 	m->lt[0] = &layouts[0];
- 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
- 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
-+	m->pertag = ecalloc(1, sizeof(Pertag));
-+	m->pertag->curtag = m->pertag->prevtag = 1;
-+
-+	for (i = 0; i <= LENGTH(tags); i++) {
-+		m->pertag->nmasters[i] = m->nmaster;
-+		m->pertag->mfacts[i] = m->mfact;
-+
-+		m->pertag->ltidxs[i][0] = m->lt[0];
-+		m->pertag->ltidxs[i][1] = m->lt[1];
-+		m->pertag->sellts[i] = m->sellt;
-+
-+		m->pertag->showbars[i] = m->showbar;
+@@ -1282,6 +1282,14 @@ resizeclient(Client *c, int x, int y, int w, int h)
+ 	c->oldw = c->w; c->w = wc.width = w;
+ 	c->oldh = c->h; c->h = wc.height = h;
+ 	wc.border_width = c->bw;
++	if (((nexttiled(c->mon->clients) == c && !nexttiled(c->next))
++	    || &monocle == c->mon->lt[c->mon->sellt]->arrange)
++	    && !c->isfullscreen && !c->isfloating
++	    && NULL != c->mon->lt[c->mon->sellt]->arrange) {
++		c->w = wc.width += c->bw * 2;
++		c->h = wc.height += c->bw * 2;
++		wc.border_width = 0;
 +	}
-+
- 	return m;
- }
- 
+ 	XConfigureWindow(dpy, c->win, CWX|CWY|CWWidth|CWHeight|CWBorderWidth, &wc);
+ 	configure(c);
+ 	XSync(dpy, False);
