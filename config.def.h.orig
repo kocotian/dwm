@@ -6,6 +6,7 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int barheight          = 25;       /* height of a bar; 0 equals autocalculation */
+static const char attachdirection   = 0;        /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
 static const char *fonts[]          = { "monospace:size=8" };
 static const char dmenufont[]       = "monospace:size=8";
 static const char col_gray1[]       = "#222222";
@@ -42,9 +43,9 @@ static const Rule rules[] = {
 };
 
 /* layout(s) */
-static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
-static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const float mfact     = 0.55;     /* factor of master area size [0.05..0.95] */
+static const int nmaster     = 1;        /* number of clients in master area */
+static const int resizehints = 0;        /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
@@ -55,6 +56,16 @@ static const Layout layouts[] = {
 	{ "|M|",      centeredmaster },
 	{ ">M>",      centeredfloatingmaster },
 	{ "><>",      NULL },    /* no layout function means floating behavior */
+};
+
+static const Direction directions[] = {
+	/* symbol     arrange function */
+	{ "-<-",      attach },    /* first entry is default */
+	{ "-^-",      attachabove },
+	{ "->-",      attachaside },
+	{ "-v-",      attachbelow },
+	{ "vvv",      attachbottom },
+	{ "^^^",      attachtop },
 };
 
 /* key definitions */
@@ -97,6 +108,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 
 	{ MODKEY,                       XK_z,      setlayout,      {0} },
+	{ MODKEY,                       XK_x,      setattach,      {0} },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },

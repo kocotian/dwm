@@ -6,7 +6,7 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int barheight          = 25;       /* height of a bar; 0 equals autocalculation */
-static const char attachdirection   = 0;        /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
+static const int attachdirection    = 0;        /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
 static const char *fonts[]          = { "monospace:size=8" };
 static const char dmenufont[]       = "monospace:size=8";
 static const char col_gray1[]       = "#222222";
@@ -108,6 +108,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 
 	{ MODKEY,                       XK_z,      setlayout,      {0} },
+	{ MODKEY|ShiftMask,             XK_z,      resetlayout,    {0} },
 	{ MODKEY,                       XK_x,      setattach,      {0} },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },

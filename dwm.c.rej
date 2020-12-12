@@ -1,11 +1,23 @@
---- dwm.c	2019-06-05 02:25:40.169986187 +0200
-+++ dwm.c	2019-06-05 10:48:42.443328992 +0200
-@@ -235,6 +235,8 @@ static int xerror(Display *dpy, XErrorEv
- static int xerrordummy(Display *dpy, XErrorEvent *ee);
- static int xerrorstart(Display *dpy, XErrorEvent *ee);
- static void zoom(const Arg *arg);
-+static void centeredmaster(Monitor *m);
-+static void centeredfloatingmaster(Monitor *m);
+--- dwm.c
++++ dwm.c
+@@ -654,6 +666,20 @@ createmon(void)
+ 	m->lt[0] = &layouts[0];
+ 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
+ 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
++	m->pertag = ecalloc(1, sizeof(Pertag));
++	m->pertag->curtag = m->pertag->prevtag = 1;
++
++	for (i = 0; i <= LENGTH(tags); i++) {
++		m->pertag->nmasters[i] = m->nmaster;
++		m->pertag->mfacts[i] = m->mfact;
++
++		m->pertag->ltidxs[i][0] = m->lt[0];
++		m->pertag->ltidxs[i][1] = m->lt[1];
++		m->pertag->sellts[i] = m->sellt;
++
++		m->pertag->showbars[i] = m->showbar;
++	}
++
+ 	return m;
+ }
  
- /* variables */
- static const char broken[] = "broken";
