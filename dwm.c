@@ -113,8 +113,15 @@ typedef struct {
 	void (*arrange)(Monitor *);
 } Layout;
 
+typedef struct {
+	const char *symbol;
+	void (*direction)(Client *);
+} Direction;
+
 struct Monitor {
 	char ltsymbol[16];
+	char attsymbol[16];
+	char attachdirection;
 	float mfact;
 	int nmaster;
 	int num;
@@ -212,6 +219,7 @@ static void sendmon(Client *c, Monitor *m);
 static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
+static void setattach(const Arg *arg);
 static void setlayout(const Arg *arg);
 static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
@@ -411,6 +419,7 @@ arrange(Monitor *m)
 void
 arrangemon(Monitor *m)
 {
+	strncpy(m->attsymbol, directions[m->attachdirection].symbol, sizeof directions[m->attachdirection].symbol);
 	strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, sizeof m->ltsymbol);
 	if (m->lt[m->sellt]->arrange)
 		m->lt[m->sellt]->arrange(m);
@@ -458,7 +467,7 @@ attachbelow(Client *c)
 	c->next = c->mon->sel->next;
 	c->mon->sel->next = c;
 }
- 
+
 void
 attachbottom(Client *c)
 {
@@ -718,6 +727,7 @@ createmon(void)
 
 	m = ecalloc(1, sizeof(Monitor));
 	m->tagset[0] = m->tagset[1] = 1;
+	m->attachdirection = attachdirection;
 	m->mfact = mfact;
 	m->nmaster = nmaster;
 	m->showbar = showbar;
@@ -725,6 +735,7 @@ createmon(void)
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
+	strncpy(m->attsymbol, directions[0].symbol, sizeof directions[0].symbol);
 	return m;
 }
 
@@ -788,7 +799,7 @@ drawbar(Monitor *m)
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeStatus]);
-		tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
+		tw = TEXTW(stext) - lrpad + 6 + 2; /* 8px right padding */
 		drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
 	}
 
@@ -808,9 +819,17 @@ drawbar(Monitor *m)
 				urg & 1 << i);
 		x += w;
 	}
+
+	/* Here you can add "modules" to
+	   barwin, after ltsymbol */
+
 	w = blw = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
+
+	w = blw = TEXTW(m->attsymbol);
+	drw_setscheme(drw, scheme[SchemeNorm]);
+	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->attsymbol, 0);
 
 	if ((w = m->ww - tw - x) > bh) {
 		if (m->sel) {
@@ -1147,7 +1166,9 @@ manage(Window w, XWindowAttributes *wa)
 		c->isfloating = c->oldstate = trans != None || c->isfixed;
 	if (c->isfloating)
 		XRaiseWindow(dpy, c->win);
-	switch(attachdirection){
+	directions[selmon->attachdirection].direction(c);
+	/*
+	switch (selmon->attachdirection){
 		case 1:
 			attachabove(c);
 			break;
@@ -1166,6 +1187,7 @@ manage(Window w, XWindowAttributes *wa)
 		default:
 			attach(c);
 	}
+	*/
 	attachstack(c);
 	XChangeProperty(dpy, root, netatom[NetClientList], XA_WINDOW, 32, PropModeAppend,
 		(unsigned char *) &(c->win), 1);
@@ -1627,6 +1649,18 @@ setfullscreen(Client *c, int fullscreen)
 		resizeclient(c, c->x, c->y, c->w, c->h);
 		arrange(c->mon);
 	}
+}
+
+void
+setattach(const Arg *arg)
+{
+	if (selmon->attachdirection < 5)
+		selmon->attachdirection++;
+	else selmon->attachdirection = 0;
+	if (selmon->sel)
+		arrange(selmon);
+	else
+		drawbar(selmon);
 }
 
 void
