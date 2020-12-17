@@ -943,7 +943,7 @@ drawbar(Monitor *m)
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeStatus]);
 		tw = TEXTW(stext) - lrpad + 6 + 2; /* 8px right padding */
-		drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
+		drw_text(drw, (m->ww - tw) + 8, 0, tw, bh, 0, stext, 0);
 	}
 
 	for (c = m->clients; c; c = c->next) {
@@ -967,11 +967,11 @@ drawbar(Monitor *m)
 	   barwin, after ltsymbol */
 
 	w = blw = TEXTW(m->ltsymbol);
-	drw_setscheme(drw, scheme[SchemeSel]);
+	drw_setscheme(drw, scheme[SchemeTagsSel]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
 
 	w = blw = TEXTW(m->attsymbol);
-	drw_setscheme(drw, scheme[SchemeNorm]);
+	drw_setscheme(drw, scheme[SchemeTagsSel]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->attsymbol, 0);
 
 	if ((w = m->ww - tw - x) > bh) {

@@ -13,15 +13,15 @@ static const char *fonts[]          = { "monospace:size=8", "JoyPixels:pixelsize
 static const char dmenufont[]       = "monospace:size=8";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
+static const char col_gray3[]       = "#aaaaaa";
+static const char col_gray4[]       = "#ffffff";
 static const char col_cyan[]        = "#005577";
 static const char *colors[][3]      = {
 	/*                       fg         bg         border   */
 	[SchemeNorm]         = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]          = { col_gray4, col_cyan,  col_cyan  },
 	[SchemeStatus]       = { col_gray3, col_gray1, "#000000" }, /* Status */
-	[SchemeTagsSel]      = { col_gray4, col_cyan,  "#000000" }, /* Tagbar l selected   */
+	[SchemeTagsSel]      = { col_gray4, col_gray1, "#000000" }, /* Tagbar l selected   */
 	[SchemeTagsNorm]     = { col_gray3, col_gray1, "#000000" }, /* Tagbar l unselected */
 	[SchemeInfoSel]      = { col_gray3, col_gray1, "#000000" }, /* Infbar m selected   */
 	[SchemeInfoNorm]     = { col_gray3, col_gray1, "#000000" }, /* Infbar m unselected */
@@ -36,12 +36,14 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class              instance    title       tags mask     isfloating   isterminal   noswallow    monitor */
+	{ "st",               NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
 	{ "Gimp",             NULL,       NULL,       0,            1,           0,           0,           -1 },
 	{ "discord",          NULL,       NULL,       1 << 7,       0,           0,           0,           -1 },
 	{ "qutebrowser",      NULL,       NULL,       1 << 1,       0,           0,           0,           -1 },
 	{ "st-256color",      NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
 	{ "Pulseeffects",     NULL,       NULL,       1 << 8,       0,           0,           0,            1 },
 	{ "TelegramDesktop",  NULL,       NULL,       1 << 6,       0,           0,           0,           -1 },
+	{ NULL,               NULL,   "Event Tester", 0,            0,           0,           1,           -1 },
 };
 
 /* layout(s) */
@@ -58,6 +60,13 @@ static const Layout layouts[] = {
 	{ "|M|",      centeredmaster },
 	{ ">M>",      centeredfloatingmaster },
 	{ "><>",      NULL },    /* no layout function means floating behavior */
+	/* { "tile",        tile },    /1* first entry is default *1/ */
+	/* { "bstack",      bstack }, */
+	/* { "bstackh",     bstackhoriz }, */
+	/* { "monocle",     monocle }, */
+	/* { "cent",        centeredmaster }, */
+	/* { "centfloat",   centeredfloatingmaster }, */
+	/* { "float",       NULL },    /1* no layout function means floating behavior *1/ */
 };
 
 static const Direction directions[] = {
@@ -68,6 +77,12 @@ static const Direction directions[] = {
 	{ "-v-",      attachbelow },
 	{ "vvv",      attachbottom },
 	{ "^^^",      attachtop },
+	/* { "left",        attach },    /1* first entry is default *1/ */
+	/* { "up",          attachabove }, */
+	/* { "right",       attachaside }, */
+	/* { "down",        attachbelow }, */
+	/* { "bottom",      attachbottom }, */
+	/* { "top",         attachtop }, */
 };
 
 /* key definitions */
@@ -162,7 +177,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_F10,    spawn,          SHCMD("dmenuumount") },
 	{ MODKEY,                       XK_F11,    spawn,          SHCMD("mpv --no-cache --no-osc --no-input-default-bindings --input-conf=/dev/null --title=webcam $(ls /dev/video[0,2,4,6,8] | tail -n 1)") },
 
-	{ 0,                            XK_Print,  spawn,          SHCMD("maim /home/kocotian/pix/screen/pic-full-$(date '+%y%m%d-%H%M-%S').png") },
+	{ 0,                            XK_Print,  spawn,          SHCMD("maim /usr/kocotian/pix/screen/pic-full-$(date '+%y%m%d-%H%M-%S').png") },
 	{ ShiftMask,                    XK_Print,  spawn,          SHCMD("maimpick") },
 	{ MODKEY,                       XK_Print,  spawn,          SHCMD("dmenurecord") },
 	{ MODKEY|ShiftMask,             XK_Print,  spawn,          SHCMD("dmenurecord kill") },
