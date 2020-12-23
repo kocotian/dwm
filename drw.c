@@ -11,6 +11,9 @@
 #define UTF_INVALID 0xFFFD
 #define UTF_SIZ     4
 
+/* @term color */
+static const char *termclr = "#000000";
+
 static const unsigned char utfbyte[UTF_SIZ + 1] = {0x80,    0, 0xC0, 0xE0, 0xF0};
 static const unsigned char utfmask[UTF_SIZ + 1] = {0xC0, 0x80, 0xE0, 0xF0, 0xF8};
 static const long utfmin[UTF_SIZ + 1] = {       0,    0,  0x80,  0x800,  0x10000};
@@ -202,10 +205,14 @@ drw_clr_create(Drw *drw, Clr *dest, const char *clrname)
 
 	if (!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen),
 	                       DefaultColormap(drw->dpy, drw->screen),
-	                       clrname, dest))
+	                       strcmp(clrname, "@term") ? clrname : termclr,
+						   dest))
 		die("error, cannot allocate color '%s'", clrname);
 
-	dest->pixel |= 0xff << 24;
+	if (!strcmp(clrname, "@term"))
+		dest->pixel |= 0xd9 << 24;
+	else
+		dest->pixel |= 0xff << 24;
 }
 
 /* Wrapper to create color schemes. The caller has to call free(3) on the

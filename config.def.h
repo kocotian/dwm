@@ -21,10 +21,13 @@ static const char *colors[][3]      = {
 	[SchemeNorm]         = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]          = { col_gray4, col_cyan,  col_cyan  },
 	[SchemeStatus]       = { col_gray3, col_gray1, "#000000" }, /* Status */
-	[SchemeTagsSel]      = { col_gray4, col_gray1, "#000000" }, /* Tagbar l selected   */
 	[SchemeTagsNorm]     = { col_gray3, col_gray1, "#000000" }, /* Tagbar l unselected */
-	[SchemeInfoSel]      = { col_gray3, col_gray1, "#000000" }, /* Infbar m selected   */
+	[SchemeTagsSel]      = { col_gray4, col_gray1, "#000000" }, /* Tagbar l selected   */
 	[SchemeInfoNorm]     = { col_gray3, col_gray1, "#000000" }, /* Infbar m unselected */
+	[SchemeInfoSel]      = { col_gray3, col_gray1, "#000000" }, /* Infbar m selected   */
+	[SchemeTermNorm]     = { col_gray3, col_gray1, "@term"   },
+	[SchemeTermSel]      = { col_gray4, col_cyan,  col_cyan  },
+	/* Terminal colors, see drw.c for customizing @term */
 };
 
 /* tagging */
@@ -211,8 +214,10 @@ static Button buttons[] = {
 	{ ClkStatusText,        0,              Button2,        sigdwmblocks,   {.i = 2} },
 	{ ClkStatusText,        0,              Button3,        sigdwmblocks,   {.i = 3} },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
+	{ ClkClientWin,         MODKEY|ShiftMask, Button1,      movemouse,      {.i = 1} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
+	{ ClkClientWin,         MODKEY|ShiftMask, Button3,      resizemouse,    {.i = 1} },
 	{ ClkTagBar,            0,              Button1,        view,           {0} },
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
