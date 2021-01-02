@@ -1839,9 +1839,11 @@ resetlayout(const Arg *arg)
 {
 	Arg default_layout = {.v = &layouts[0]};
 	Arg default_mfact = {.f = mfact + 1};
+	Arg default_attachment = {.i = -1};
 
 	setlayout(&default_layout);
 	setmfact(&default_mfact);
+	setattach(&default_attachment);
 }
 
 void
@@ -2151,7 +2153,9 @@ setfullscreen(Client *c, int fullscreen)
 void
 setattach(const Arg *arg)
 {
-	if (selmon->attachdirection < 5)
+	if (arg->i == -1)
+		selmon->attachdirection = 0;
+	else if (selmon->attachdirection < 5)
 		selmon->attachdirection++;
 	else selmon->attachdirection = 0;
 	if (selmon->sel)

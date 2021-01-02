@@ -47,9 +47,9 @@ static const Rule rules[] = {
 	 */
 	/* class              instance    title       tags mask     isfloating   isterminal   noswallow    monitor */
 	{ "st",               NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
-	{ "Gimp",             NULL,       NULL,       0,            1,           0,           0,           -1 },
+	{ "St",               NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
+	{ "Gimp",             NULL,       NULL,       1 << 8,       0,           0,           0,           -1 },
 	{ "discord",          NULL,       NULL,       1 << 7,       0,           1,           0,           -1 },
-	{ "qutebrowser",      NULL,       NULL,       1 << 1,       0,           0,           0,           -1 },
 	{ "st-256color",      NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
 	{ "Pulseeffects",     NULL,       NULL,       1 << 8,       0,           0,           0,            1 },
 	{ "TelegramDesktop",  NULL,       NULL,       1 << 6,       0,           0,           0,           -1 },
@@ -70,20 +70,13 @@ static const Layout layouts[] = {
 	{ "|M|",      centeredmaster },
 	{ ">M>",      centeredfloatingmaster },
 	{ "><>",      NULL },    /* no layout function means floating behavior */
-	/* { "tile",        tile },    /1* first entry is default *1/ */
-	/* { "bstack",      bstack }, */
-	/* { "bstackh",     bstackhoriz }, */
-	/* { "monocle",     monocle }, */
-	/* { "cent",        centeredmaster }, */
-	/* { "centfloat",   centeredfloatingmaster }, */
-	/* { "float",       NULL },    /1* no layout function means floating behavior *1/ */
 };
 
 static const Direction directions[] = {
 	/* symbol     arrange function */
-	{ "-<-",      attach },    /* first entry is default */
+	{ "replace",  attach },    /* first entry is default */
+	{ "aside",    attachaside },
 	{ "-^-",      attachabove },
-	{ "->-",      attachaside },
 	{ "-v-",      attachbelow },
 	{ "vvv",      attachbottom },
 	{ "^^^",      attachtop },
@@ -188,6 +181,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_z,      setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_z,      resetlayout,    {0} },
 	{ MODKEY,                       XK_x,      setattach,      {0} },
+	{ MODKEY|ShiftMask,             XK_x,      setattach,      {.i = -1} },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY|ShiftMask,             XK_b,      spawn,          SHCMD("setbg") },
 	{ MODKEY,                       XK_n,      spawn,          SHCMD("st -e newsboat; pkill -RTMIN+6 dwmblocks") },
