@@ -2818,32 +2818,22 @@ updatesizehints(Client *c)
 }
 
 void
-updatestatusorig(void)
-{
-	if (!gettextprop(root, XA_WM_NAME, rawstext, sizeof(rawstext)))
-		strcpy(stext, "dwm-"VERSION);
-	else
-		copyvalidchars(stext, rawstext);
-	drawbar(selmon);
-}
-
-void
 updatestatus(void)
 {
-	char qtext[4096];
-	if (!gettextprop(root, XA_WM_NAME, qtext, sizeof(qtext))) {
+	char text[2048];
+	if (!gettextprop(root, XA_WM_NAME, rawstext, sizeof(rawstext))) {
 		strcpy(stext, "dwm-"VERSION);
 		estext[0] = '\0';
 	} else {
-		copyvalidchars(rawstext, qtext);
-		char *e = strchr(rawstext, statussep);
+		copyvalidchars(text, rawstext);
+		char *e = strchr(text, statussep);
 		if (e) {
 			*e = '\0'; e++;
 			strncpy(estext, e, sizeof(estext) - 1);
 		} else {
 			estext[0] = '\0';
 		}
-		strncpy(stext, rawstext, sizeof(stext) - 1);
+		strncpy(stext, text, sizeof(stext) - 1);
 	}
 	drawbar(selmon);
 }
