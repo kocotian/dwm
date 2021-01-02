@@ -1,5 +1,8 @@
 /* See LICENSE file for copyright and license details. */
 
+/* functions */
+static void modmove(const Arg *arg);
+
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -144,6 +147,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_e,      spawn,          SHCMD("st -e abook -C ~/.config/abook/abookrc --datafile ~/.config/abook/addressbook") },
 	{ MODKEY,                       XK_r,      reorganizetags, {0} },
 	{ MODKEY|ShiftMask,             XK_r,      setcfact,       {.f =  0.00} },
+
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_p,      spawn,          SHCMD("mpc toggle") },
@@ -158,18 +162,27 @@ static Key keys[] = {
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_d,      spawn,          SHCMD("dmenize") },
 	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
+
+	/* bits: [hk/jl], [jk/hl], [withControl] */
+
+	{ MODKEY|ShiftMask,             XK_j,      modmove,        {.i = (0 + (0 << 1) + (0 << 2))} },
+	{ MODKEY|ShiftMask,             XK_k,      modmove,        {.i = (0 + (0 << 1) + (1 << 2))} },
+	{ MODKEY|ShiftMask,             XK_h,      modmove,        {.i = (0 + (1 << 1) + (0 << 2))} },
+	{ MODKEY|ShiftMask,             XK_l,      modmove,        {.i = (0 + (1 << 1) + (1 << 2))} },
+	{ MODKEY|ControlMask,           XK_j,      modmove,        {.i = (1 + (0 << 1) + (0 << 2))} },
+	{ MODKEY|ControlMask,           XK_k,      modmove,        {.i = (1 + (0 << 1) + (1 << 2))} },
+	{ MODKEY|ControlMask,           XK_h,      modmove,        {.i = (1 + (1 << 1) + (0 << 2))} },
+	{ MODKEY|ControlMask,           XK_l,      modmove,        {.i = (1 + (1 << 1) + (1 << 2))} },
+
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_j,      movestack,      {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_k,      movestack,      {.i = -1 } },
+	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY|Mod1Mask,              XK_j,      focusmon,       {.i = -1 } },
 	{ MODKEY|Mod1Mask,              XK_k,      focusmon,       {.i = +1 } },
 	{ MODKEY|Mod1Mask|ShiftMask,    XK_j,      tagmon,         {.i = -1 } },
 	{ MODKEY|Mod1Mask|ShiftMask,    XK_k,      tagmon,         {.i = +1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY|ShiftMask,             XK_h,      setcfact,       {.f = -0.25} },
-	{ MODKEY|ShiftMask,             XK_l,      setcfact,       {.f = +0.25} },
+
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 
 	{ MODKEY,                       XK_z,      setlayout,      {0} },
@@ -229,3 +242,29 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
+
+static void modmove(const Arg *arg)
+{
+	int f;
+	f = selmon->sel->isfloating;
+	Arg a;
+
+	/* bits: [hk/jl], [jk/hl], [withControl] */
+	if ((arg->i >> 1) & 1) { /* hl */
+		if ((arg->i >> 2) & 1) { /* l */
+			if (f) a.v = (arg->i & 1 ? "0x 0y 25w 0h" : "25x 0y 0w 0h"), moveresize(&a);
+			else a.f = +0.25, setcfact(&a);
+		} else { /* h */
+			if (f) a.v = (arg->i & 1 ? "0x 0y -25w 0h" : "-25x 0y 0w 0h"), moveresize(&a);
+			else a.f = -0.25, setcfact(&a);
+		}
+	} else { /* jk */
+		if ((arg->i >> 2) & 1) { /* k */
+			if (f) a.v = (arg->i & 1 ? "0x 0y 0w -25h" : "0x -25y 0w 0h"), moveresize(&a);
+			else a.f = -1, movestack(&a);
+		} else { /* j */
+			if (f) a.v = (arg->i & 1 ? "0x 0y 0w 25h" : "0x 25y 0w 0h"), moveresize(&a);
+			else a.f = +1, movestack(&a);
+		}
+	}
+}
