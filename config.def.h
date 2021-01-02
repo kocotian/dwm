@@ -15,18 +15,22 @@ static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#aaaaaa";
 static const char col_gray4[]       = "#ffffff";
-static const char col_cyan[]        = "#005577";
+static const char col_acc1[]        = "#a46600";
+static const char col_acc2[]        = "#d79921";
 static const char *colors[][3]      = {
 	/*                       fg         bg         border   */
 	[SchemeNorm]         = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]          = { col_gray4, col_cyan,  col_cyan  },
-	[SchemeStatus]       = { col_gray3, col_gray1, "#000000" }, /* Status */
+	[SchemeSel]          = { col_gray4, col_acc2,  col_acc2  },
+	[SchemeStatus]       = { col_gray3, col_gray1, "#000000" }, /* Status              */
 	[SchemeTagsNorm]     = { col_gray3, col_gray1, "#000000" }, /* Tagbar l unselected */
-	[SchemeTagsSel]      = { col_gray4, col_gray1, "#000000" }, /* Tagbar l selected   */
+	[SchemeTagsSel]      = { col_gray4, col_gray2, "#000000" }, /* Tagbar l selected   */
+	[SchemeTagLnNorm]    = { col_gray2, col_gray2, "#000000" }, /* Line normal         */
+	[SchemeTagLnOcc]     = { col_acc1,  col_acc1,  "#000000" }, /* Line occupied       */
+	[SchemeTagLnSel]     = { col_acc2,  col_acc2,  "#000000" }, /* Line selected       */
 	[SchemeInfoNorm]     = { col_gray3, col_gray1, "#000000" }, /* Infbar m unselected */
 	[SchemeInfoSel]      = { col_gray3, col_gray1, "#000000" }, /* Infbar m selected   */
 	[SchemeTermNorm]     = { col_gray3, col_gray1, "@term"   },
-	[SchemeTermSel]      = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeTermSel]      = { col_gray4, col_acc2,  col_acc2  },
 	/* Terminal colors, see drw.c for customizing @term */
 };
 
@@ -41,7 +45,7 @@ static const Rule rules[] = {
 	/* class              instance    title       tags mask     isfloating   isterminal   noswallow    monitor */
 	{ "st",               NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
 	{ "Gimp",             NULL,       NULL,       0,            1,           0,           0,           -1 },
-	{ "discord",          NULL,       NULL,       1 << 7,       0,           0,           0,           -1 },
+	{ "discord",          NULL,       NULL,       1 << 7,       0,           1,           0,           -1 },
 	{ "qutebrowser",      NULL,       NULL,       1 << 1,       0,           0,           0,           -1 },
 	{ "st-256color",      NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
 	{ "Pulseeffects",     NULL,       NULL,       1 << 8,       0,           0,           0,            1 },
@@ -102,12 +106,28 @@ static const Direction directions[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", /* "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_acc, "-sf", col_gray4, */ NULL };
 static const char *termcmd[]  = { "st", NULL };
 
 #include "movestack.c"
 static Key keys[] = {
 	/* modifier                     key        function        argument */
+	{ MODKEY|ShiftMask,             XK_F1,     quit,           {1} }, /* restart */
+	{ MODKEY|ControlMask|ShiftMask, XK_F1,     quit,           {0} }, /* quit */
+	{ MODKEY,                       XK_F4,     spawn,          SHCMD("st -e pulsemixer; kill -44 $(pidof dwmblocks)") },
+
+	{ MODKEY,                       XK_F5,     setlayout,      {.v = &layouts[0]} },
+	{ MODKEY|ShiftMask,             XK_F5,     setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_F6,     setlayout,      {.v = &layouts[2]} },
+	{ MODKEY|ShiftMask,             XK_F6,     setlayout,      {.v = &layouts[3]} },
+	{ MODKEY,                       XK_F7,     setlayout,      {.v = &layouts[4]} },
+	{ MODKEY|ShiftMask,             XK_F7,     setlayout,      {.v = &layouts[5]} },
+
+	{ MODKEY,                       XK_F9,     spawn,          SHCMD("dmenumount") },
+	{ MODKEY,                       XK_F10,    spawn,          SHCMD("dmenuumount") },
+	{ MODKEY,                       XK_F11,    spawn,          SHCMD("mpv --no-cache --no-osc --no-input-default-bindings --input-conf=/dev/null --title=webcam $(ls /dev/video[0,2,4,6,8] | tail -n 1)") },
+	{ MODKEY,                       XK_F12,    spawn,          SHCMD("sudo notifytog") },
+
 	{ MODKEY,                       XK_grave,  spawn,          SHCMD("dmenuunicode") },
 	{ MODKEY,                       XK_minus,  spawn,          SHCMD("pamixer --allow-boost -d 5; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY|ShiftMask,             XK_minus,  spawn,          SHCMD("pamixer --allow-boost -d 15; kill -44 $(pidof dwmblocks)") },
@@ -124,12 +144,6 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_e,      spawn,          SHCMD("st -e abook -C ~/.config/abook/abookrc --datafile ~/.config/abook/addressbook") },
 	{ MODKEY,                       XK_r,      reorganizetags, {0} },
 	{ MODKEY|ShiftMask,             XK_r,      setcfact,       {.f =  0.00} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY|ShiftMask,             XK_t,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|ShiftMask,             XK_y,      setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[4]} },
-	{ MODKEY|ShiftMask,             XK_u,      setlayout,      {.v = &layouts[5]} },
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_p,      spawn,          SHCMD("mpc toggle") },
@@ -175,11 +189,6 @@ static Key keys[] = {
 	{ MODKEY,                       XK_space,  zoom,           {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 
-	{ MODKEY,                       XK_F4,     spawn,          SHCMD("st -e pulsemixer; kill -44 $(pidof dwmblocks)") },
-	{ MODKEY,                       XK_F9,     spawn,          SHCMD("dmenumount") },
-	{ MODKEY,                       XK_F10,    spawn,          SHCMD("dmenuumount") },
-	{ MODKEY,                       XK_F11,    spawn,          SHCMD("mpv --no-cache --no-osc --no-input-default-bindings --input-conf=/dev/null --title=webcam $(ls /dev/video[0,2,4,6,8] | tail -n 1)") },
-
 	{ 0,                            XK_Print,  spawn,          SHCMD("maim /usr/kocotian/pix/screen/pic-full-$(date '+%y%m%d-%H%M-%S').png") },
 	{ ShiftMask,                    XK_Print,  spawn,          SHCMD("maimpick") },
 	{ MODKEY,                       XK_Print,  spawn,          SHCMD("dmenurecord") },
@@ -198,9 +207,6 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-
-	{ MODKEY|ShiftMask,             XK_F8,     quit,           {1} }, /* restart */
-	{ MODKEY|ControlMask|ShiftMask, XK_F8,     quit,           {0} }, /* quit */
 };
 
 /* button definitions */
