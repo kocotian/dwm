@@ -20,6 +20,35 @@ static const char col_gray3[]       = "#aaaaaa";
 static const char col_gray4[]       = "#ffffff";
 static const char col_acc1[]        = "#a46600";
 static const char col_acc2[]        = "#d79921";
+
+/* static const char col_stat0[]       = "#000000"; */
+/* static const char col_stat1[]       = "#cc241d"; */
+/* static const char col_stat2[]       = "#98971a"; */
+/* static const char col_stat3[]       = "#d79921"; */
+/* static const char col_stat4[]       = "#458588"; */
+/* static const char col_stat5[]       = "#b16286"; */
+/* static const char col_stat6[]       = "#689d6a"; */
+/* static const char col_stat7[]       = "#a89984"; */
+
+/* static const char col_stat0[]       = "#928374"; */
+/* static const char col_stat1[]       = "#fb4934"; */
+/* static const char col_stat2[]       = "#b8bb26"; */
+/* static const char col_stat3[]       = "#fabd2f"; */
+/* static const char col_stat4[]       = "#83a598"; */
+/* static const char col_stat5[]       = "#d3869b"; */
+/* static const char col_stat6[]       = "#8ec07c"; */
+/* static const char col_stat7[]       = "#ebdbb2"; */
+
+/* gruvbox */
+static const char col_stat0[]       = "#000000";
+static const char col_stat1[]       = "#fb4934";
+static const char col_stat2[]       = "#98971a";
+static const char col_stat3[]       = "#d79921";
+static const char col_stat4[]       = "#458588";
+static const char col_stat5[]       = "#b16286";
+static const char col_stat6[]       = "#689d6a";
+static const char col_stat7[]       = "#a89984";
+
 static const char *colors[][3]      = {
 	/*                       fg         bg         border   */
 	[SchemeNorm]         = { col_gray3, col_gray1, col_gray2 },
@@ -27,14 +56,26 @@ static const char *colors[][3]      = {
 	[SchemeStatus]       = { col_gray3, col_gray1, "#000000" }, /* Status              */
 	[SchemeTagsNorm]     = { col_gray3, col_gray1, "#000000" }, /* Tagbar l unselected */
 	[SchemeTagsSel]      = { col_gray4, col_gray2, "#000000" }, /* Tagbar l selected   */
-	[SchemeTagLnNorm]    = { col_gray2, col_gray2, "#000000" }, /* Line normal         */
-	[SchemeTagLnOcc]     = { col_acc1,  col_acc1,  "#000000" }, /* Line occupied       */
-	[SchemeTagLnSel]     = { col_acc2,  col_acc2,  "#000000" }, /* Line selected       */
+	[SchemeTagLnNorm]    = { col_gray2, col_gray2, "#000000" }, /* Top Line normal     */
+	[SchemeTagLnOcc]     = { col_acc1,  col_acc1,  "#000000" }, /* Top Line occupied   */
+	[SchemeTagLnSel]     = { col_acc2,  col_acc2,  "#000000" }, /* Top Line selected   */
 	[SchemeInfoNorm]     = { col_gray3, col_gray1, "#000000" }, /* Infbar m unselected */
 	[SchemeInfoSel]      = { col_gray3, col_gray1, "#000000" }, /* Infbar m selected   */
+
+	/* Terminal colors, see drw.c for customizing @term */
 	[SchemeTermNorm]     = { col_gray3, col_gray1, "@term"   },
 	[SchemeTermSel]      = { col_gray4, col_acc2,  col_acc2  },
-	/* Terminal colors, see drw.c for customizing @term */
+
+	/* Statusbar colors */
+	[StatusLn]           = { col_gray2, col_gray1, "#000000" },
+	[StatusBlack]        = { col_stat0, col_gray1, "#000000" },
+	[StatusRed]          = { col_stat1, col_gray1, "#000000" },
+	[StatusGreen]        = { col_stat2, col_gray1, "#000000" },
+	[StatusYellow]       = { col_stat3, col_gray1, "#000000" },
+	[StatusBlue]         = { col_stat4, col_gray1, "#000000" },
+	[StatusMagenta]      = { col_stat5, col_gray1, "#000000" },
+	[StatusCyan]         = { col_stat6, col_gray1, "#000000" },
+	[StatusWhite]        = { col_stat7, col_gray1, "#000000" },
 };
 
 /* tagging */

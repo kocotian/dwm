@@ -69,7 +69,9 @@ enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
 enum { SchemeNorm, SchemeSel, SchemeStatus,
        SchemeTagsSel, SchemeTagsNorm,
        SchemeTagLnSel, SchemeTagLnOcc, SchemeTagLnNorm,
-       SchemeInfoSel, SchemeInfoNorm, SchemeTermSel, SchemeTermNorm }; /* color schemes */
+       SchemeInfoSel, SchemeInfoNorm, SchemeTermSel, SchemeTermNorm,
+       StatusLn, StatusBlack, StatusRed, StatusGreen, StatusYellow,
+       StatusBlue, StatusMagenta, StatusCyan, StatusWhite }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -931,6 +933,7 @@ copyvalidchars(char *text, char *rawtext)
 	while(rawtext[++i]) {
 		if ((unsigned char)rawtext[i] >= ' ') {
 			text[j++] = rawtext[i];
+			if (rawtext[i] == 127) puts("COPYING 127");
 		}
 	}
 	text[j] = '\0';
@@ -1031,7 +1034,7 @@ drawbar(Monitor *m)
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
 	char qtext[2049], *qptr, *ntext = 0, tmpch, drawn = 0;
-	int xoffset = 0;
+	int xoffset = 0, qscheme = SchemeStatus;
 	Client *c;
 
 	/* draw status first so it can be overdrawn by tags later */
@@ -1047,18 +1050,28 @@ drawbar(Monitor *m)
 		--qptr;
 		while (*(++qptr)) {
 			if (*qptr == 127) {
-				drw_setscheme(drw, scheme[SchemeStatus]);
-				tmpch = *qptr;
-				*qptr = '\0';
-				drw_text(drw, (m->ww - tw) + xoffset, 0, drw_fontset_getwidth(drw, (ntext)), bh, 0, ntext, 0);
-				drw_setscheme(drw, scheme[SchemeTagLnSel]);
-				drw_rect(drw, (m->ww - tw) + xoffset + 1, 0, drw_fontset_getwidth(drw, (ntext)) - 2, 2, 1, 1);
-				xoffset += drw_fontset_getwidth(drw, (ntext));
-				*qptr = tmpch;
-				if (tmpch)
-					++qptr;
-				ntext = qptr;
-				drawn = 1;
+				++qptr;
+				if (*qptr == 127) {
+					drw_setscheme(drw, scheme[qscheme]);
+					tmpch = *qptr;
+					*qptr = '\0';
+					drw_text(drw, (m->ww - tw) + xoffset, 0, drw_fontset_getwidth(drw, (ntext)), bh, 0, ntext, 0);
+					if (qscheme == SchemeStatus)
+						drw_setscheme(drw, scheme[StatusLn]);
+					drw_rect(drw, (m->ww - tw) + xoffset + 1, 0, drw_fontset_getwidth(drw, (ntext)) - 2, 2, 1, 0);
+					qscheme = SchemeStatus;
+					drw_setscheme(drw, scheme[qscheme]);
+					xoffset += drw_fontset_getwidth(drw, (ntext));
+					*qptr = tmpch;
+					if (tmpch)
+						++qptr;
+					ntext = qptr;
+					qscheme = SchemeStatus;
+					drawn = 1;
+				} else if (*qptr >= '0' && *qptr <= '7') {
+					qscheme = StatusBlack + (*qptr - '0');
+					*qptr = 127;
+				}
 			}
 		}
 		if (!drawn) {
@@ -1115,7 +1128,6 @@ drawbar(Monitor *m)
 
 	if (m == selmon) { /* extra status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeNorm]);
-
 		/* drw_text(drw, 0, 0, mons->ww, bh, 0, estext, 0); */
 		strcpy(qtext, estext);
 		qptr = qtext;
@@ -1128,19 +1140,25 @@ drawbar(Monitor *m)
 			}
 		while (*(++qptr)) {
 			if (*qptr == 127) {
-				if (*(++qptr) == 127) {
-					drw_setscheme(drw, scheme[SchemeStatus]);
+				++qptr;
+				if (*qptr == 127) {
+					drw_setscheme(drw, scheme[qscheme]);
 					tmpch = *qptr;
 					*qptr = '\0';
 					drw_text(drw, 0 + xoffset, 0, mons->ww - xoffset, bh, 0, ntext, 0);
-					drw_setscheme(drw, scheme[SchemeTagLnSel]);
-					drw_rect(drw, 0 + xoffset + 1, bh - 2, drw_fontset_getwidth(drw, (ntext)) - 2, 2, 1, 1);
+					if (qscheme == SchemeStatus)
+						drw_setscheme(drw, scheme[StatusLn]);
+					drw_rect(drw, 0 + xoffset + 1, bh - 2, drw_fontset_getwidth(drw, (ntext)) - 2, 2, 1, 0);
 					xoffset += drw_fontset_getwidth(drw, (ntext));
 					*qptr = tmpch;
 					if (tmpch)
 						++qptr;
 					ntext = qptr;
+					qscheme = SchemeStatus;
 					drawn = 1;
+				} else if (*qptr >= '0' && *qptr <= '7') {
+					qscheme = StatusBlack + (*qptr - '0');
+					*qptr = 127;
 				}
 			}
 		}
