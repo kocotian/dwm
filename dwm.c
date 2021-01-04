@@ -1028,19 +1028,15 @@ void
 drawbar(Monitor *m)
 {
 	int x, w, tw = 0;
-	int boxs = drw->fonts->h / 9;
-	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
 	char qtext[2049], *qptr, *ntext = 0, tmpch, drawn = 0;
-	int xoffset = 0, qscheme = SchemeStatus;
+	int xoffset = 0, qscheme = SchemeStatus, dbh = (bh - 2); /* dbh - drawable bar height */
 	Client *c;
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeStatus]);
-		/* tw = TEXTW(stext) - lrpad + 6 + 2; /1* 8px right padding *1/ */
 		tw = TEXTW(stext) - lrpad;
-		/* drw_text(drw, (m->ww - tw), 0, tw, bh, 0, stext, 0); */
 		strcpy(qtext, " ");
 		strcat(qtext, stext);
 		qptr = qtext;
@@ -1053,7 +1049,7 @@ drawbar(Monitor *m)
 					drw_setscheme(drw, scheme[qscheme]);
 					tmpch = *qptr;
 					*qptr = '\0';
-					drw_text(drw, (m->ww - tw) + xoffset, 0 + 2, drw_fontset_getwidth(drw, (ntext)), bh - 2, 0, ntext, 0);
+					drw_text(drw, (m->ww - tw) + xoffset, 2, drw_fontset_getwidth(drw, (ntext)), dbh, 0, ntext, 0);
 					if (qscheme == SchemeStatus)
 						drw_setscheme(drw, scheme[StatusLn]);
 					drw_rect(drw, (m->ww - tw) + xoffset + 1, 0, drw_fontset_getwidth(drw, (ntext)) - 2, 2, 1, 0);
@@ -1064,7 +1060,6 @@ drawbar(Monitor *m)
 					if (tmpch)
 						++qptr;
 					ntext = qptr;
-					qscheme = SchemeStatus;
 					drawn = 1;
 				} else if (*qptr >= '0' && *qptr <= '7') {
 					qscheme = StatusBlack + (*qptr - '0');
@@ -1073,7 +1068,7 @@ drawbar(Monitor *m)
 			}
 		}
 		if (!drawn) {
-			drw_text(drw, (m->ww - tw), 0 + 2, tw, bh - 2, 0, stext, 0);
+			drw_text(drw, (m->ww - tw), 2, tw, dbh, 0, stext, 0);
 			drw_rect(drw, (m->ww - tw) + 1, 0, TEXTW(ntext) - 2, 2, 1, 1);
 		}
 		xoffset = drawn = 0;
@@ -1088,7 +1083,7 @@ drawbar(Monitor *m)
 	for (i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeTagsSel : SchemeTagsNorm]);
-		drw_text(drw, x, 0 + 2, w, bh - 2, lrpad / 2, tags[i], urg & 1 << i);
+		drw_text(drw, x, 2, w, dbh, lrpad / 2, tags[i], urg & 1 << i);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeTagLnSel : (occ & 1 << i) ? SchemeTagLnOcc : SchemeTagLnNorm]);
 		drw_rect(drw, x + 1, 0, w - 2, 2,
 			m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
@@ -1103,13 +1098,13 @@ drawbar(Monitor *m)
 	drw_setscheme(drw, scheme[SchemeTagLnNorm]);
 	drw_rect(drw, x + 1, 0, w - 2, 2, 1, 1);
 	drw_setscheme(drw, scheme[SchemeTagsNorm]);
-	x = drw_text(drw, x, 0 + 2, w, bh - 2, lrpad / 2, m->ltsymbol, 0);
+	x = drw_text(drw, x, 2, w, dbh, lrpad / 2, m->ltsymbol, 0);
 
 	w = blw = TEXTW(m->attsymbol);
 	drw_setscheme(drw, scheme[SchemeTagLnNorm]);
 	drw_rect(drw, x + 1, 0, w - 2, 2, 1, 1);
 	drw_setscheme(drw, scheme[SchemeTagsNorm]);
-	x = drw_text(drw, x, 0 + 2, w, bh - 2, lrpad / 2, m->attsymbol, 0);
+	x = drw_text(drw, x, 2, w, dbh, lrpad / 2, m->attsymbol, 0);
 
 	if ((w = m->ww - tw - x) > bh) {
 		if (m->sel) {
@@ -1118,11 +1113,9 @@ drawbar(Monitor *m)
 			/* make sure name will not overlap on tags even when it is very long */
 			mid = mid >= lrpad / 2 ? mid : lrpad / 2;
 			drw_setscheme(drw, scheme[m == selmon ? SchemeInfoSel : SchemeInfoNorm]);
-			drw_text(drw, x, 0 + 2, w, bh - 2, mid, m->sel->name, 0);
+			drw_text(drw, x, 2, w, dbh, mid, m->sel->name, 0);
 			drw_setscheme(drw, scheme[m->sel->isfloating ? SchemeTagLnSel : SchemeTagLnNorm]);
 			drw_rect(drw, x + 1, 0, w - 2, 2, 1, 1);
-			/* if (m->sel->isfloating) */
-			/* 	drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0); */
 		} else {
 			drw_setscheme(drw, scheme[SchemeInfoNorm]);
 			drw_rect(drw, x, 0, w, bh, 1, 1);
@@ -1135,7 +1128,6 @@ drawbar(Monitor *m)
 	drw_text(drw, 0, 0, mons->ww, bh, 0, "", 0);
 	if (m == selmon) { /* extra status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeNorm]);
-		/* drw_text(drw, 0, 0, mons->ww, bh, 0, estext, 0); */
 		strcpy(qtext, estext);
 		qptr = qtext;
 		ntext = qptr;
@@ -1152,16 +1144,17 @@ drawbar(Monitor *m)
 					drw_setscheme(drw, scheme[qscheme]);
 					tmpch = *qptr;
 					*qptr = '\0';
-					drw_text(drw, 0 + xoffset, 0, mons->ww - xoffset, bh, 0, ntext, 0);
+					drw_text(drw, xoffset, 0, mons->ww - xoffset, bh, 0, ntext, 0);
 					if (qscheme == SchemeStatus)
 						drw_setscheme(drw, scheme[StatusLn]);
-					drw_rect(drw, 0 + xoffset + 1, bh - 2, drw_fontset_getwidth(drw, (ntext)) - 2, 2, 1, 0);
+					drw_rect(drw, xoffset + 1, dbh, drw_fontset_getwidth(drw, (ntext)) - 2, 2, 1, 0);
+					qscheme = SchemeStatus;
+					drw_setscheme(drw, scheme[qscheme]);
 					xoffset += drw_fontset_getwidth(drw, (ntext));
 					*qptr = tmpch;
 					if (tmpch)
 						++qptr;
 					ntext = qptr;
-					qscheme = SchemeStatus;
 					drawn = 1;
 				} else if (*qptr >= '0' && *qptr <= '7') {
 					qscheme = StatusBlack + (*qptr - '0');
@@ -1171,13 +1164,13 @@ drawbar(Monitor *m)
 		}
 		if (!drawn) {
 			drw_text(drw, 0, 0, tw, bh, 0, estext, 0);
-			drw_rect(drw, 0 + 1, 0, TEXTW(ntext) - 2, 2, 1, 1);
+			drw_rect(drw, 1, 0, TEXTW(ntext) - 2, 2, 1, 1);
 		}
 		xoffset = drawn = 0;
 
 	} else {
 		drw_setscheme(drw, scheme[SchemeNorm]);
-		drw_text(drw, 0, 0 + 2, mons->ww, bh - 2, 0, "", 0);
+		drw_text(drw, 0, 2, mons->ww, dbh, 0, "", 0);
 	}
 	drw_map(drw, m->extrabarwin, 0, 0, m->ww, bh);
 }
