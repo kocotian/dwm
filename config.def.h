@@ -291,17 +291,21 @@ static void modmove(const Arg *arg)
 	if ((arg->i >> 1) & 1) { /* hl */
 		if ((arg->i >> 2) & 1) { /* l */
 			if (f) a.v = (arg->i & 1 ? "0x 0y 25w 0h" : "25x 0y 0w 0h"), moveresize(&a);
+			else if (arg->i & 1) togglefloating(0), modmove(arg);
 			else a.f = +0.25, setcfact(&a);
 		} else { /* h */
 			if (f) a.v = (arg->i & 1 ? "0x 0y -25w 0h" : "-25x 0y 0w 0h"), moveresize(&a);
+			else if (arg->i & 1) togglefloating(0), modmove(arg);
 			else a.f = -0.25, setcfact(&a);
 		}
 	} else { /* jk */
 		if ((arg->i >> 2) & 1) { /* k */
 			if (f) a.v = (arg->i & 1 ? "0x 0y 0w -25h" : "0x -25y 0w 0h"), moveresize(&a);
+			else if (arg->i & 1) togglefloating(0), modmove(arg);
 			else a.f = -1, movestack(&a);
 		} else { /* j */
 			if (f) a.v = (arg->i & 1 ? "0x 0y 0w 25h" : "0x 25y 0w 0h"), moveresize(&a);
+			else if (arg->i & 1) togglefloating(0), modmove(arg);
 			else a.f = +1, movestack(&a);
 		}
 	}
