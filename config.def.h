@@ -181,6 +181,10 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_e,      spawn,          SHCMD("st -e abook -C ~/.config/abook/abookrc --datafile ~/.config/abook/addressbook") },
 	{ MODKEY,                       XK_r,      reorganizetags, {0} },
 	{ MODKEY|ShiftMask,             XK_r,      setcfact,       {.f =  0.00} },
+	{ MODKEY,                       XK_t,      spawn,          SHCMD("st -e gotop") },
+	{ MODKEY|ShiftMask,             XK_t,      spawn,          SHCMD("st -e htop") },
+	{ MODKEY|ControlMask,           XK_t,      spawn,          SHCMD("st -e bpytop") },
+	{ MODKEY|Mod1Mask,              XK_t,      spawn,          SHCMD("st -e top") },
 
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
