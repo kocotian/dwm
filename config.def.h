@@ -151,7 +151,8 @@ static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY|ShiftMask,             XK_F1,     quit,           {1} }, /* restart */
 	{ MODKEY|ControlMask|ShiftMask, XK_F1,     quit,           {0} }, /* quit */
-	{ MODKEY,                       XK_F4,     spawn,          SHCMD("st -e pulsemixer; kill -44 $(pidof dwmblocks)") },
+	{ MODKEY,                       XK_F4,     spawn,          SHCMD("st -e alsamixer; kill -44 $(pidof dwmblocks)") },
+	{ MODKEY|ShiftMask,             XK_F4,     spawn,          SHCMD("st -e pulsemixer; kill -44 $(pidof dwmblocks)") },
 
 	{ MODKEY,                       XK_F5,     setlayout,      {.v = &layouts[0]} },
 	{ MODKEY|ShiftMask,             XK_F5,     setlayout,      {.v = &layouts[1]} },
@@ -166,10 +167,10 @@ static Key keys[] = {
 	{ MODKEY,                       XK_F12,    spawn,          SHCMD("sudo notifytog") },
 
 	{ MODKEY,                       XK_grave,  spawn,          SHCMD("dmenuunicode") },
-	{ MODKEY,                       XK_minus,  spawn,          SHCMD("pamixer --allow-boost -d 5; kill -44 $(pidof dwmblocks)") },
-	{ MODKEY|ShiftMask,             XK_minus,  spawn,          SHCMD("pamixer --allow-boost -d 15; kill -44 $(pidof dwmblocks)") },
-	{ MODKEY,                       XK_equal,  spawn,          SHCMD("pamixer --allow-boost -i 5; kill -44 $(pidof dwmblocks)") },
-	{ MODKEY|ShiftMask,             XK_equal,  spawn,          SHCMD("pamixer --allow-boost -i 15; kill -44 $(pidof dwmblocks)") },
+	{ MODKEY,                       XK_minus,  spawn,          SHCMD("volumectl dec") },
+	{ MODKEY|ShiftMask,             XK_minus,  spawn,          SHCMD("volumectl DEC") },
+	{ MODKEY,                       XK_equal,  spawn,          SHCMD("volumectl inc") },
+	{ MODKEY|ShiftMask,             XK_equal,  spawn,          SHCMD("volumectl INC") },
 	{ MODKEY,                       XK_BackSpace, spawn,       SHCMD("sysact") },
 	{ MODKEY|ShiftMask,             XK_BackSpace, spawn,       SHCMD("sysact") },
 
@@ -232,7 +233,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_n,      spawn,          SHCMD("st -e newsboat; pkill -RTMIN+6 dwmblocks") },
 	{ MODKEY|ShiftMask,             XK_n,      spawn,          SHCMD("st -e nvim -c VimwikiIndex") },
 	{ MODKEY,                       XK_m,      spawn,          SHCMD("st -e ncmpcpp") },
-	{ MODKEY|ShiftMask,             XK_m,      spawn,          SHCMD("pamixer -t; kill -44 $(pidof dwmblocks)") },
+	{ MODKEY|ShiftMask,             XK_m,      spawn,          SHCMD("volumectl toggle") },
+	{ MODKEY|ControlMask,           XK_m,      spawn,          SHCMD("mpvclip") },
 	{ MODKEY,                       XK_comma,  spawn,          SHCMD("mpc prev") },
 	{ MODKEY|ShiftMask,             XK_comma,  spawn,          SHCMD("mpc seek 0%") },
 	{ MODKEY,                       XK_period, spawn,          SHCMD("mpc next") },
