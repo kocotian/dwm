@@ -230,6 +230,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_x,      setattach,      {.i = -1} },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY|ShiftMask,             XK_b,      spawn,          SHCMD("setbg") },
+	{ MODKEY,                       XK_c,      spawn,          SHCMD("st -e calcurse") },
 	{ MODKEY,                       XK_n,      spawn,          SHCMD("st -e newsboat; pkill -RTMIN+6 dwmblocks") },
 	{ MODKEY|ShiftMask,             XK_n,      spawn,          SHCMD("st -e nvim -c VimwikiIndex") },
 	{ MODKEY,                       XK_m,      spawn,          SHCMD("st -e ncmpcpp") },
