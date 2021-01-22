@@ -12,6 +12,8 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const char statussep         = ';';      /* separator between status bars */
 static const int barheight          = 25;       /* height of a bar; 0 equals autocalculation */
 static const int attachdirection    = 0;        /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
+static const int ogappx             = 30;
+static const int igappx             = 3;
 static const char *fonts[]          = { "monospace:size=8", "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=8";
 static const char col_gray1[]       = "#222222";
@@ -196,7 +198,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_bracketright, spawn,    SHCMD("mpc seek +10") },
 	{ MODKEY|ShiftMask,             XK_bracketright, spawn,    SHCMD("mpc seek +60") },
 
-	{ MODKEY,                       XK_a,      spawn,          SHCMD("st -e lf") },
+	{ MODKEY,                       XK_a,      gaptog,         {0} },
 	{ MODKEY|ShiftMask,             XK_a,      spawn,          SHCMD("st -e htop") },
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_d,      spawn,          SHCMD("dmenize") },
@@ -224,13 +226,15 @@ static Key keys[] = {
 
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 
-	{ MODKEY,                       XK_z,      setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_z,      resetlayout,    {0} },
-	{ MODKEY,                       XK_x,      setattach,      {0} },
-	{ MODKEY|ShiftMask,             XK_x,      setattach,      {.i = -1} },
+	{ MODKEY,                       XK_z,      setattach,      {0} },
+	{ MODKEY|ShiftMask,             XK_z,      setattach,      {.i = -1} },
+	{ MODKEY,                       XK_x,      spawn,          SHCMD("st -e calcurse") },
+	{ MODKEY,                       XK_c,      setigappx,      {.i = +3} },
+	{ MODKEY,                       XK_v,      setigappx,      {.i = -3} },
+	{ MODKEY|ShiftMask,             XK_c,      setogappx,      {.i = +3} },
+	{ MODKEY|ShiftMask,             XK_v,      setogappx,      {.i = -3} },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY|ShiftMask,             XK_b,      spawn,          SHCMD("setbg") },
-	{ MODKEY,                       XK_c,      spawn,          SHCMD("st -e calcurse") },
 	{ MODKEY,                       XK_n,      spawn,          SHCMD("st -e newsboat; pkill -RTMIN+6 dwmblocks") },
 	{ MODKEY|ShiftMask,             XK_n,      spawn,          SHCMD("st -e nvim -c VimwikiIndex") },
 	{ MODKEY,                       XK_m,      spawn,          SHCMD("st -e ncmpcpp") },

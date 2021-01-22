@@ -144,6 +144,7 @@ struct Monitor {
 	int eby;	      /* extra bar geometry */
 	int mx, my, mw, mh;   /* screen size */
 	int wx, wy, ww, wh;   /* window area  */
+	unsigned int ogappx, igappx;
 	unsigned int seltags;
 	unsigned int sellt;
 	unsigned int tagset[2];
@@ -249,6 +250,9 @@ static void setattach(const Arg *arg);
 static void setlayout(const Arg *arg);
 static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
+static void setigappx(const Arg *arg);
+static void setogappx(const Arg *arg);
+static void gaptog(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
@@ -955,6 +959,8 @@ createmon(void)
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 	strncpy(m->attsymbol, directions[attachdirection].symbol,
 			strlen(directions[attachdirection].symbol) + 1);
+	m->ogappx = ogappx;
+	m->igappx = igappx;
 
 	m->pertag = ecalloc(1, sizeof(Pertag));
 	m->pertag->curtag = m->pertag->prevtag = 1;
@@ -2291,6 +2297,33 @@ setmfact(const Arg *arg)
 }
 
 void
+setigappx(const Arg *arg)
+{
+	selmon->igappx += arg->i;
+	if (selmon->igappx < 0) selmon->igappx = 0;
+	arrange(selmon);
+}
+
+void
+setogappx(const Arg *arg)
+{
+	selmon->ogappx += arg->i;
+	if (selmon->ogappx < 0) selmon->ogappx = 0;
+	arrange(selmon);
+}
+
+void
+gaptog(const Arg *arg)
+{
+	if (selmon->ogappx == ogappx && selmon->igappx == igappx) {
+		selmon->ogappx = 0; selmon->igappx = 0;
+	} else {
+		selmon->ogappx = ogappx; selmon->igappx = igappx;
+	}
+	arrange(selmon);
+}
+
+void
 setup(void)
 {
 	int i;
@@ -2513,15 +2546,18 @@ tile(Monitor *m)
 	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 		if (i < m->nmaster) {
 			h = (m->wh - my) * (c->cfact / mfacts);
-			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
+			if (n <= m->nmaster)
+				resize(c, m->wx + m->ogappx, m->wy + my + m->ogappx, mw - (2*c->bw) - (2*m->ogappx), h - (2*c->bw) - (2*m->ogappx), 0);
+			else
+				resize(c, m->wx + m->ogappx, m->wy + my + m->ogappx, mw - (2*c->bw) - m->ogappx - m->igappx, h - (2*c->bw) - (2*m->ogappx), 0);
 			if (my + HEIGHT(c) < m->wh)
-				my += HEIGHT(c);
+				my += HEIGHT(c) + (2*m->igappx);
      mfacts -= c->cfact;
 		} else {
 			h = (m->wh - ty) * (c->cfact / sfacts);
-			resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
+			resize(c, m->wx + mw + m->igappx, m->wy + ty + m->ogappx, m->ww - mw - (2*c->bw) - m->ogappx - m->igappx, h - (2*c->bw) - (2*m->ogappx), 0);
 			if (ty + HEIGHT(c) < m->wh)
-				ty += HEIGHT(c);
+				ty += HEIGHT(c) + (2*m->igappx);
      sfacts -= c->cfact;
 		}
 }
