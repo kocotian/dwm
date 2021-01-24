@@ -144,7 +144,7 @@ struct Monitor {
 	int eby;	      /* extra bar geometry */
 	int mx, my, mw, mh;   /* screen size */
 	int wx, wy, ww, wh;   /* window area  */
-	unsigned int ogappx, igappx;
+	unsigned int smartgaps, ogappx, igappx;
 	unsigned int seltags;
 	unsigned int sellt;
 	unsigned int tagset[2];
@@ -959,8 +959,9 @@ createmon(void)
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 	strncpy(m->attsymbol, directions[attachdirection].symbol,
 			strlen(directions[attachdirection].symbol) + 1);
-	m->ogappx = ogappx;
-	m->igappx = igappx;
+	m->smartgaps = smartgaps;
+	m->ogappx    = ogappx;
+	m->igappx    = igappx;
 
 	m->pertag = ecalloc(1, sizeof(Pertag));
 	m->pertag->curtag = m->pertag->prevtag = 1;
@@ -2324,10 +2325,14 @@ setogappx(const Arg *arg)
 void
 gaptog(const Arg *arg)
 {
-	if (selmon->ogappx == ogappx && selmon->igappx == igappx) {
-		selmon->ogappx = 0; selmon->igappx = 0;
-	} else {
-		selmon->ogappx = ogappx; selmon->igappx = igappx;
+	if (arg->i)
+		selmon->smartgaps = !selmon->smartgaps;
+	else {
+		if (selmon->ogappx == ogappx && selmon->igappx == igappx) {
+			selmon->ogappx = 0; selmon->igappx = 0;
+		} else {
+			selmon->ogappx = ogappx; selmon->igappx = igappx;
+		}
 	}
 	arrange(selmon);
 }
@@ -2556,7 +2561,7 @@ tile(Monitor *m)
 		if (i < m->nmaster) {
 			h = (m->wh - my) * (c->cfact / mfacts);
 			if (n <= m->nmaster)
-				resize(c, m->wx + m->ogappx, m->wy + my + m->ogappx, mw - (2*c->bw) - (2*m->ogappx), h - (2*c->bw) - (2*m->ogappx), 0);
+				resize(c, m->wx + (!m->smartgaps*m->ogappx), m->wy + my + (!m->smartgaps*m->ogappx), mw - (2*c->bw) - (!m->smartgaps*(2*m->ogappx)), h - (2*c->bw) - (!m->smartgaps*(2*m->ogappx)), 0);
 			else
 				resize(c, m->wx + m->ogappx, m->wy + my + m->ogappx, mw - (2*c->bw) - m->ogappx - m->igappx, h - (2*c->bw) - (2*m->ogappx), 0);
 			if (my + HEIGHT(c) < m->wh)

@@ -6,14 +6,15 @@ static void modmove(const Arg *arg);
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const unsigned int smartgaps = 1;        /* smart gaps */
+static const unsigned int ogappx    = 30;       /* outer gaps */
+static const unsigned int igappx    = 3;        /* inner gaps */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char statussep         = ';';      /* separator between status bars */
 static const int barheight          = 25;       /* height of a bar; 0 equals autocalculation */
 static const int attachdirection    = 0;        /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
-static const int ogappx             = 30;
-static const int igappx             = 3;
 static const char *fonts[]          = { "monospace:size=8", "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=8";
 static const char col_gray1[]       = "#222222";
@@ -199,7 +200,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_bracketright, spawn,    SHCMD("mpc seek +60") },
 
 	{ MODKEY,                       XK_a,      gaptog,         {0} },
-	{ MODKEY|ShiftMask,             XK_a,      spawn,          SHCMD("st -e htop") },
+	{ MODKEY|ShiftMask,             XK_a,      gaptog,         {1} },
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_d,      spawn,          SHCMD("dmenize") },
 	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
