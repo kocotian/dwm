@@ -290,7 +290,7 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 	{ ClkRootWin,           0,              Button1,        spawn,          SHCMD("st") },
 	{ ClkRootWin,           MODKEY,         Button1,        spawn,          { .v = dmenucmd} },
-	{ ClkRootWin,           MODKEY,         Button3,        spawn,          SHCMD("dmenize") },
+	{ ClkRootWin,           0,              Button3,        spawn,          SHCMD("dmenize-rightclick") },
 };
 
 static void modmove(const Arg *arg)
