@@ -4,7 +4,7 @@
 static void modmove(const Arg *arg);
 
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int smartgaps = 1;        /* smart gaps */
 static const unsigned int ogappx    = 30;       /* outer gaps */
@@ -17,12 +17,20 @@ static const int barheight          = 25;       /* height of a bar; 0 equals aut
 static const int attachdirection    = 0;        /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
 static const char *fonts[]          = { "monospace:size=8", "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=8";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
+
+/* static const char col_gray1[]       = "#222222"; */
+/* static const char col_gray2[]       = "#444444"; */
+/* static const char col_gray3[]       = "#aaaaaa"; */
+/* static const char col_gray4[]       = "#ffffff"; */
+/* static const char col_acc1[]        = "#a46600"; */
+/* static const char col_acc2[]        = "#d79921"; */
+
+static const char col_gray1[]       = "#000000";
+static const char col_gray2[]       = "#222222";
 static const char col_gray3[]       = "#aaaaaa";
 static const char col_gray4[]       = "#ffffff";
-static const char col_acc1[]        = "#a46600";
-static const char col_acc2[]        = "#d79921";
+static const char col_acc1[]        = "#770077";
+static const char col_acc2[]        = "#bb22dd";
 
 /* static const char col_stat0[]       = "#000000"; */
 /* static const char col_stat1[]       = "#cc241d"; */
