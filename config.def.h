@@ -29,8 +29,10 @@ static const char col_gray1[]       = "#000000";
 static const char col_gray2[]       = "#222222";
 static const char col_gray3[]       = "#aaaaaa";
 static const char col_gray4[]       = "#ffffff";
-static const char col_acc1[]        = "#770077";
-static const char col_acc2[]        = "#bb22dd";
+/* static const char col_acc1[]        = "#770077"; */
+/* static const char col_acc2[]        = "#bb22dd"; */
+static const char col_acc1[]        = "#656407";
+static const char col_acc2[]        = "#98971a";
 
 /* static const char col_stat0[]       = "#000000"; */
 /* static const char col_stat1[]       = "#cc241d"; */
@@ -193,10 +195,13 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_e,      spawn,          SHCMD("st -e abook -C ~/.config/abook/abookrc --datafile ~/.config/abook/addressbook") },
 	{ MODKEY,                       XK_r,      reorganizetags, {0} },
 	{ MODKEY|ShiftMask,             XK_r,      setcfact,       {.f =  0.00} },
+
 	{ MODKEY,                       XK_t,      spawn,          SHCMD("st -e gotop") },
 	{ MODKEY|ShiftMask,             XK_t,      spawn,          SHCMD("st -e htop") },
 	{ MODKEY|ControlMask,           XK_t,      spawn,          SHCMD("st -e bpytop") },
 	{ MODKEY|Mod1Mask,              XK_t,      spawn,          SHCMD("st -e top") },
+	{ MODKEY,                       XK_y,      spawn,          SHCMD("mpvclip") },
+	{ MODKEY|ShiftMask,             XK_y,      spawn,          SHCMD("ytdlclip") },
 
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
@@ -248,7 +253,6 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_n,      spawn,          SHCMD("st -e nvim -c VimwikiIndex") },
 	{ MODKEY,                       XK_m,      spawn,          SHCMD("st -e ncmpcpp") },
 	{ MODKEY|ShiftMask,             XK_m,      spawn,          SHCMD("volumectl toggle") },
-	{ MODKEY|ControlMask,           XK_m,      spawn,          SHCMD("mpvclip") },
 	{ MODKEY,                       XK_comma,  spawn,          SHCMD("mpc prev") },
 	{ MODKEY|ShiftMask,             XK_comma,  spawn,          SHCMD("mpc seek 0%") },
 	{ MODKEY,                       XK_period, spawn,          SHCMD("mpc next") },
