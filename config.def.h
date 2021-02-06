@@ -238,6 +238,8 @@ static Key keys[] = {
 	{ MODKEY|Mod1Mask|ShiftMask,    XK_j,      tagmon,         {.i = -1 } },
 	{ MODKEY|Mod1Mask|ShiftMask,    XK_k,      tagmon,         {.i = +1 } },
 
+	{ MODKEY,                       XK_apostrophe, spawn,      SHCMD("st -e bc -l") },
+
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 
 	{ MODKEY,                       XK_z,      setattach,      {0} },
