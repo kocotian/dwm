@@ -1994,8 +1994,13 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	    || &monocle == c->mon->lt[c->mon->sellt]->arrange)
 	    && !c->isfullscreen && !c->isfloating
 	    && NULL != c->mon->lt[c->mon->sellt]->arrange) || c->isfloating) {
-		c->w = wc.width;
-		c->h = wc.height;
+		if (c->isfloating) {
+			c->w = wc.width;
+			c->h = wc.height;
+		} else {
+			c->w = wc.width += c->bw * 2;
+			c->h = wc.height += c->bw * 2;
+		}
 		wc.border_width = 0;
 	}
 
