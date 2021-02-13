@@ -15,6 +15,7 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const char statussep         = ';';      /* separator between status bars */
 static const int barheight          = 25;       /* height of a bar; 0 equals autocalculation */
 static const int attachdirection    = 0;        /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
+static const int centerwindowname   = 0;        /* 0 means window name on the left */
 static const char *fonts[]          = { "monospace:size=8", "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=8";
 
