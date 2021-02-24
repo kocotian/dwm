@@ -1135,6 +1135,7 @@ drawbar(Monitor *m)
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 
 	drw_setscheme(drw, scheme[SchemeNorm]);
+	drw_rect(drw, 0, 0, mons->ww, bh, 1, 1);
 	drw_text(drw, 0, 0, mons->ww, bh, 0, "", 0);
 	if (m == selmon) { /* extra status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeNorm]);
@@ -1183,6 +1184,7 @@ drawbar(Monitor *m)
 		drw_text(drw, 0, 2, mons->ww, dbh, 0, "", 0);
 	}
 	drw_map(drw, m->extrabarwin, 0, 0, m->ww, bh);
+	drw_rect(drw, 0, 0, mons->ww, bh, 1, 1);
 }
 
 void
@@ -2569,18 +2571,27 @@ tile(Monitor *m)
 		if (i < m->nmaster) {
 			h = (m->wh - my) * (c->cfact / mfacts);
 			if (n <= m->nmaster)
-				resize(c, m->wx + (!m->smartgaps*m->ogappx), m->wy + my + (!m->smartgaps*m->ogappx), mw - (2*c->bw) - (!m->smartgaps*(2*m->ogappx)), h - (2*c->bw) - (!m->smartgaps*(2*m->ogappx)), 0);
+				resize(c, m->wx + (!m->smartgaps*m->ogappx),
+						m->wy + my + (!m->smartgaps*m->ogappx),
+						mw - (2*c->bw) - (!m->smartgaps*(2*m->ogappx)),
+						h - (2*c->bw) - (!m->smartgaps*(2*m->ogappx)), 0);
 			else
-				resize(c, m->wx + m->ogappx, m->wy + my + m->ogappx, mw - (2*c->bw) - m->ogappx - m->igappx, h - (2*c->bw) - (2*m->ogappx), 0);
+				resize(c, m->wx + m->ogappx,
+						m->wy + my + m->ogappx,
+						mw - (2*c->bw) - m->ogappx - m->igappx,
+						h - (2*c->bw) - (2*m->ogappx), 0);
 			if (my + HEIGHT(c) < m->wh)
 				my += HEIGHT(c) + (2*m->igappx);
-     mfacts -= c->cfact;
+			mfacts -= c->cfact;
 		} else {
 			h = (m->wh - ty) * (c->cfact / sfacts);
-			resize(c, m->wx + mw + m->igappx, m->wy + ty + m->ogappx, m->ww - mw - (2*c->bw) - m->ogappx - m->igappx, h - (2*c->bw) - (2*m->ogappx), 0);
+			resize(c, m->wx + mw + m->igappx,
+					m->wy + ty + m->ogappx,
+					m->ww - mw - (2*c->bw) - m->ogappx - m->igappx,
+					h - (2*c->bw) - (2*m->ogappx), 0);
 			if (ty + HEIGHT(c) < m->wh)
 				ty += HEIGHT(c) + (2*m->igappx);
-     sfacts -= c->cfact;
+			sfacts -= c->cfact;
 		}
 }
 
@@ -3306,7 +3317,8 @@ bstack(Monitor *m)
 	}
 	if (n == 0)
 		return;
-	if(n == 1){
+
+	if (n == 1) {
 		c = nexttiled(m->clients);
 		resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
 		return;
@@ -3319,15 +3331,28 @@ bstack(Monitor *m)
 	for (i = 0, mx = tx = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 		if (i < m->nmaster) {
 			w = (m->ww - mx) * (c->cfact / mfacts);
-			resize(c, m->wx + mx, m->wy, w - (2*c->bw), mh - 2*c->bw, 0);
+			if (n <= m->nmaster)
+				resize(c, m->wx + mx + m->ogappx,
+						m->wy + m->ogappx,
+						w - (2*c->bw) - (2*m->ogappx),
+						mh - 2*c->bw - (2*m->ogappx), 0);
+			else
+				resize(c, m->wx + mx + m->ogappx,
+						m->wy + m->ogappx,
+						w - (2*c->bw) - (2*m->ogappx),
+						mh - 2*c->bw - m->ogappx, 0);
 			if(mx + WIDTH(c) < m->mw)
-				mx += WIDTH(c);
+				mx += WIDTH(c) + (2*m->igappx);
 			mfacts -= c->cfact;
 		} else {
 			w = (m->ww - tx) * (c->cfact / sfacts);
-			resize(c, m->wx + tx, m->wy + mh, w - (2*c->bw), m->wh - mh - 2*(c->bw), 0);
+			resize(c, m->wx + tx + m->ogappx,
+					m->wy + mh + (2*m->igappx),
+					w - (2*c->bw) - (2*m->ogappx),
+					m->wh - mh - (2*c->bw) - (2*m->igappx) - m->ogappx,
+					0);
 			if(tx + WIDTH(c) < m->mw)
-				tx += WIDTH(c);
+				tx += WIDTH(c) + (2*m->igappx);
 			sfacts -= c->cfact;
 		}
 }

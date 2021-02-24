@@ -12,12 +12,12 @@ static const unsigned int igappx    = 3;        /* inner gaps */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char statussep         = ';';      /* separator between status bars */
 static const int barheight          = 25;       /* height of a bar; 0 equals autocalculation */
 static const int attachdirection    = 0;        /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
 static const int centerwindowname   = 0;        /* 0 means window name on the left */
-static const char *fonts[]          = { "monospace:size=8", "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
-static const char dmenufont[]       = "monospace:size=8";
+static const char statussep         = ';';      /* separator between status bars */
+static const char *fonts[]          = { "monospace:size=8:antialias=true:autohint=true", "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
+static const char dmenufont[]       = "monospace:size=8:antialias=true:autohint=true";
 
 /* static const char col_gray1[]       = "#222222"; */
 /* static const char col_gray2[]       = "#444444"; */
@@ -104,22 +104,23 @@ static const Rule rules[] = {
 	{ "st",               NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
 	{ "St",               NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
 	{ "Gimp",             NULL,       NULL,       1 << 8,       0,           0,           0,           -1 },
+	{ "Mumble",           NULL,       NULL,       1 << 8,       0,           0,           0,            1 },
 	{ "discord",          NULL,       NULL,       1 << 7,       0,           1,           0,           -1 },
 	{ "st-256color",      NULL,       NULL,       0 << 0,       0,           1,           0,           -1 },
-	{ "Pulseeffects",     NULL,       NULL,       1 << 8,       0,           0,           0,            1 },
 	{ "TelegramDesktop",  NULL,       NULL,       1 << 6,       0,           0,           0,           -1 },
+	{ "Microsoft Teams - Preview",    NULL, NULL, 1 << 0,       0,           0,           0,            1 },
 	{ NULL,               NULL,   "Event Tester", 0,            0,           0,           1,           -1 },
 };
 
 /* layout(s) */
 static const float mfact     = 0.55;     /* factor of master area size [0.05..0.95] */
-static const int nmaster     = 1;        /* number of clients in master area */
+static const int nmaster     = 2;        /* number of clients in master area */
 static const int resizehints = 0;        /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
-	{ "TTT",      bstack },
+	{ "TTT",      bstack },  /* first entry is default */
+	{ "[]=",      tile },
 	{ "===",      bstackhoriz },
 	{ "[M]",      monocle },
 	{ "|M|",      centeredmaster },
