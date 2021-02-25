@@ -19,41 +19,14 @@ static const char statussep         = ';';      /* separator between status bars
 static const char *fonts[]          = { "monospace:size=8:antialias=true:autohint=true", "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=8:antialias=true:autohint=true";
 
-/* static const char col_gray1[]       = "#222222"; */
-/* static const char col_gray2[]       = "#444444"; */
-/* static const char col_gray3[]       = "#aaaaaa"; */
-/* static const char col_gray4[]       = "#ffffff"; */
-/* static const char col_acc1[]        = "#a46600"; */
-/* static const char col_acc2[]        = "#d79921"; */
-
+/* color customization */
 static const char col_gray1[]       = "#000000";
 static const char col_gray2[]       = "#222222";
 static const char col_gray3[]       = "#aaaaaa";
 static const char col_gray4[]       = "#ffffff";
-/* static const char col_acc1[]        = "#770077"; */
-/* static const char col_acc2[]        = "#bb22dd"; */
 static const char col_acc1[]        = "#656407";
 static const char col_acc2[]        = "#98971a";
 
-/* static const char col_stat0[]       = "#000000"; */
-/* static const char col_stat1[]       = "#cc241d"; */
-/* static const char col_stat2[]       = "#98971a"; */
-/* static const char col_stat3[]       = "#d79921"; */
-/* static const char col_stat4[]       = "#458588"; */
-/* static const char col_stat5[]       = "#b16286"; */
-/* static const char col_stat6[]       = "#689d6a"; */
-/* static const char col_stat7[]       = "#a89984"; */
-
-/* static const char col_stat0[]       = "#928374"; */
-/* static const char col_stat1[]       = "#fb4934"; */
-/* static const char col_stat2[]       = "#b8bb26"; */
-/* static const char col_stat3[]       = "#fabd2f"; */
-/* static const char col_stat4[]       = "#83a598"; */
-/* static const char col_stat5[]       = "#d3869b"; */
-/* static const char col_stat6[]       = "#8ec07c"; */
-/* static const char col_stat7[]       = "#ebdbb2"; */
-
-/* gruvbox */
 static const char col_stat0[]       = "#000000";
 static const char col_stat1[]       = "#fb4934";
 static const char col_stat2[]       = "#98971a";
@@ -114,13 +87,14 @@ static const Rule rules[] = {
 
 /* layout(s) */
 static const float mfact     = 0.55;     /* factor of master area size [0.05..0.95] */
-static const int nmaster     = 2;        /* number of clients in master area */
+static const int nmaster     = 1;        /* number of clients in master area */
 static const int resizehints = 0;        /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "TTT",      bstack },  /* first entry is default */
+	{ "###",      dynamiclayout },    /* first entry is default */
 	{ "[]=",      tile },
+	{ "TTT",      bstack },
 	{ "===",      bstackhoriz },
 	{ "[M]",      monocle },
 	{ "|M|",      centeredmaster },
@@ -136,12 +110,6 @@ static const Direction directions[] = {
 	{ "-v-",      attachbelow },
 	{ "vvv",      attachbottom },
 	{ "^^^",      attachtop },
-	/* { "left",        attach },    /1* first entry is default *1/ */
-	/* { "up",          attachabove }, */
-	/* { "right",       attachaside }, */
-	/* { "down",        attachbelow }, */
-	/* { "bottom",      attachbottom }, */
-	/* { "top",         attachtop }, */
 };
 
 /* key definitions */
@@ -240,6 +208,8 @@ static Key keys[] = {
 	{ MODKEY|Mod1Mask|ShiftMask,    XK_j,      tagmon,         {.i = -1 } },
 	{ MODKEY|Mod1Mask|ShiftMask,    XK_k,      tagmon,         {.i = +1 } },
 
+	{ MODKEY,                       XK_semicolon,  spawn,      SHCMD("dmenize") },
+	{ MODKEY|ShiftMask,             XK_semicolon,  spawn,      SHCMD("dmenize") },
 	{ MODKEY,                       XK_apostrophe, spawn,      SHCMD("st -e bc -l") },
 
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },

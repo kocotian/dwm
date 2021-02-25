@@ -264,6 +264,7 @@ static void spawn(const Arg *arg);
 static void swaptags(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
+static void dynamiclayout(Monitor *m);
 static void tile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
@@ -1931,15 +1932,16 @@ resetlayout(const Arg *arg)
 {
 	Arg default_layout = {.v = &layouts[0]};
 	Arg default_mfact = {.f = mfact + 1};
-	Arg default_attachment = {.i = -1};
+	/* Arg default_attachment = {.i = -1}; */
 
 	setlayout(&default_layout);
 	setmfact(&default_mfact);
-	setattach(&default_attachment);
+	/* setattach(&default_attachment); */
 }
 
 void
-reorganizetags(const Arg *arg) {
+reorganizetags(const Arg *arg)
+{
 	Client *c;
 	unsigned int occ, unocc, i;
 	unsigned int tagdest[LENGTH(tags)];
@@ -2545,6 +2547,20 @@ tagmon(const Arg *arg)
 	if (!selmon->sel || !mons->next)
 		return;
 	sendmon(selmon->sel, dirtomon(arg->i));
+}
+
+void
+dynamiclayout(Monitor *m)
+{
+	unsigned int n;
+	Client *c;
+
+	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+
+	if (n - m->nmaster > 2)
+		bstack(m); /* if there are (> 2) slave window, bottomstack em */
+	else
+		tile(m); /* otherwise make default tile layout */
 }
 
 void
