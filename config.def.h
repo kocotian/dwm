@@ -22,8 +22,10 @@ static const char dmenufont[]       = "monospace:size=8:antialias=true:autohint=
 /* color customization */
 static const char col_gray1[]       = "#000000";
 static const char col_gray2[]       = "#222222";
-static const char col_gray3[]       = "#aaaaaa";
-static const char col_gray4[]       = "#ffffff";
+/* static const char col_gray3[]       = "#968660"; */
+static const char col_gray3[]       = "#ebdbb2";
+/* static const char col_gray4[]       = "#ebdbb2"; */
+static const char col_gray4[]       = "#fffff7";
 static const char col_acc1[]        = "#656407";
 static const char col_acc2[]        = "#98971a";
 
@@ -172,6 +174,7 @@ static Key keys[] = {
 	{ MODKEY|Mod1Mask,              XK_t,      spawn,          SHCMD("st -e top") },
 	{ MODKEY,                       XK_y,      spawn,          SHCMD("mpvclip") },
 	{ MODKEY|ShiftMask,             XK_y,      spawn,          SHCMD("ytdlclip") },
+	{ MODKEY|ControlMask,           XK_y,      spawn,          SHCMD("youtube-viewer") },
 
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
