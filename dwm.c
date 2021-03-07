@@ -144,7 +144,7 @@ struct Monitor {
 	int eby;	      /* extra bar geometry */
 	int mx, my, mw, mh;   /* screen size */
 	int wx, wy, ww, wh;   /* window area  */
-	unsigned int smartgaps, ogappx, igappx;
+	unsigned int smartgaps, smartbord, ogappx, igappx;
 	unsigned int seltags;
 	unsigned int sellt;
 	unsigned int tagset[2];
@@ -253,6 +253,7 @@ static void setmfact(const Arg *arg);
 static void setigappx(const Arg *arg);
 static void setogappx(const Arg *arg);
 static void gaptog(const Arg *arg);
+static void sbtog(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
@@ -961,6 +962,7 @@ createmon(void)
 	strncpy(m->attsymbol, directions[attachdirection].symbol,
 			strlen(directions[attachdirection].symbol) + 1);
 	m->smartgaps = smartgaps;
+	m->smartbord = smartbord;
 	m->ogappx    = ogappx;
 	m->igappx    = igappx;
 
@@ -1136,7 +1138,7 @@ drawbar(Monitor *m)
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 
 	drw_setscheme(drw, scheme[SchemeNorm]);
-	drw_rect(drw, 0, 0, mons->ww, bh, 1, 1);
+	drw_rect(drw, 0, 0, m->ww, bh, 1, 1);
 	drw_text(drw, 0, 0, mons->ww, bh, 0, "", 0);
 	if (m == selmon) { /* extra status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeNorm]);
@@ -1243,7 +1245,7 @@ focus(Client *c)
 		detachstack(c);
 		attachstack(c);
 		grabbuttons(c, 1);
-		XSetWindowBorder(dpy, c->win, scheme[c->isterminal ? SchemeTermSel : SchemeSel][ColBorder].pixel);
+		XSetWindowBorder(dpy, c->win, scheme[c->isterminal && selmon->smartbord ? SchemeTermSel : SchemeSel][ColBorder].pixel);
 		setfocus(c);
 	} else {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
@@ -1516,7 +1518,7 @@ manage(Window w, XWindowAttributes *wa)
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
-	XSetWindowBorder(dpy, w, scheme[c->isterminal ? SchemeTermNorm : SchemeNorm][ColBorder].pixel);
+	XSetWindowBorder(dpy, w, scheme[c->isterminal && selmon->smartbord ? SchemeTermNorm : SchemeNorm][ColBorder].pixel);
 	configure(c); /* propagates border_width, if size doesn't change */
 	updatewindowtype(c);
 	updatesizehints(c);
@@ -2350,6 +2352,12 @@ gaptog(const Arg *arg)
 }
 
 void
+sbtog(const Arg *arg)
+{
+	selmon->smartbord = !selmon->smartbord;
+}
+
+void
 setup(void)
 {
 	int i;
@@ -2701,7 +2709,7 @@ unfocus(Client *c, int setfocus)
 	if (!c)
 		return;
 	grabbuttons(c, 0);
-	XSetWindowBorder(dpy, c->win, scheme[c->isterminal ? SchemeTermNorm : SchemeNorm][ColBorder].pixel);
+	XSetWindowBorder(dpy, c->win, scheme[c->isterminal && selmon->smartbord ? SchemeTermNorm : SchemeNorm][ColBorder].pixel);
 	if (setfocus) {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);

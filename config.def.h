@@ -7,6 +7,7 @@ static void modmove(const Arg *arg);
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int smartgaps = 1;        /* smart gaps */
+static const unsigned int smartbord = 1;        /* smart borders */
 static const unsigned int ogappx    = 30;       /* outer gaps */
 static const unsigned int igappx    = 3;        /* inner gaps */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
@@ -187,6 +188,7 @@ static Key keys[] = {
 
 	{ MODKEY,                       XK_a,      gaptog,         {0} },
 	{ MODKEY|ShiftMask,             XK_a,      gaptog,         {1} },
+	{ MODKEY|ControlMask,           XK_a,      sbtog,          {0} },
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_d,      spawn,          SHCMD("dmenize") },
 	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
