@@ -89,7 +89,7 @@ static const Rule rules[] = {
 };
 
 /* layout(s) */
-static const float mfact     = 0.55;     /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.50;     /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;        /* number of clients in master area */
 static const int resizehints = 0;        /* 1 means respect size hints in tiled resizals */
 
@@ -152,6 +152,9 @@ static Key keys[] = {
 	{ MODKEY,                       XK_F11,    spawn,          SHCMD("mpv --no-cache --no-osc --no-input-default-bindings --input-conf=/dev/null --title=webcam $(ls /dev/video[0,2,4,6,8] | tail -n 1)") },
 	{ MODKEY,                       XK_F12,    spawn,          SHCMD("sudo notifytog") },
 
+	{ MODKEY,                       XK_Insert, spawn,          SHCMD("xdotool type \"$(xclip -selection primary -o)\"") },
+	{ MODKEY|ShiftMask,             XK_Insert, spawn,          SHCMD("xdotool type \"$(xclip -selection clipboard -o)\"") },
+
 	{ MODKEY,                       XK_grave,  spawn,          SHCMD("dmenuunicode") },
 	{ MODKEY,                       XK_minus,  spawn,          SHCMD("volumectl dec") },
 	{ MODKEY|ShiftMask,             XK_minus,  spawn,          SHCMD("volumectl DEC") },
@@ -204,6 +207,11 @@ static Key keys[] = {
 	{ MODKEY|ControlMask,           XK_h,      modmove,        {.i = (1 + (1 << 1) + (0 << 2))} },
 	{ MODKEY|ControlMask,           XK_l,      modmove,        {.i = (1 + (1 << 1) + (1 << 2))} },
 
+	{ MODKEY|Mod1Mask|ControlMask,  XK_j,      spawn,          SHCMD("xdotool key Down") },
+	{ MODKEY|Mod1Mask|ControlMask,  XK_k,      spawn,          SHCMD("xdotool key Up") },
+	{ MODKEY|Mod1Mask|ControlMask,  XK_h,      spawn,          SHCMD("xdotool key Left") },
+	{ MODKEY|Mod1Mask|ControlMask,  XK_l,      spawn,          SHCMD("xdotool key Right") },
+
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
@@ -238,7 +246,8 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_period, spawn,          SHCMD("mpc repeat") },
 
 	{ MODKEY,                       XK_space,  zoom,           {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {1} },
+	{ MODKEY|ShiftMask|ControlMask, XK_space,  togglefloating, {0} },
 
 	{ 0,                            XK_Print,  spawn,          SHCMD("maim /usr/kocotian/pix/screen/pic-full-$(date '+%y%m%d-%H%M-%S').png") },
 	{ ShiftMask,                    XK_Print,  spawn,          SHCMD("maimpick") },

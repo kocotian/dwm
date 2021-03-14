@@ -2637,9 +2637,16 @@ togglefloating(const Arg *arg)
 	if (selmon->sel->isfullscreen) /* no support for fullscreen windows */
 		return;
 	selmon->sel->isfloating = !selmon->sel->isfloating || selmon->sel->isfixed;
-	if (selmon->sel->isfloating)
-		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
-			selmon->sel->w, selmon->sel->h, 0);
+	if (selmon->sel->isfloating) {
+		if (arg != NULL) {
+			if (arg->i)
+				resize(selmon->sel, selmon->wx + 250, selmon->wy + 150,
+					selmon->ww - 500, selmon->wh - 300, 0);
+			else
+				resize(selmon->sel, selmon->sel->x, selmon->sel->y,
+					selmon->sel->w, selmon->sel->h, 0);
+		}
+	}
 	if (!selmon->sel->isfloating && selmon->sel->crop)
 		cropdelete(selmon->sel);
 	arrange(selmon);
