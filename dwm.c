@@ -42,6 +42,7 @@
 #include <X11/Xft/Xft.h>
 #include <X11/Xlib-xcb.h>
 #include <xcb/res.h>
+#include <X11/extensions/XTest.h>
 #ifdef __OpenBSD__
 #include <sys/sysctl.h>
 #include <kvm.h>
@@ -63,6 +64,7 @@
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
 #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
+#define DELAY                   100000
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
@@ -218,6 +220,7 @@ static void grabbuttons(Client *c, int focused);
 static void grabkeys(void);
 static void incnmaster(const Arg *arg);
 static void keypress(XEvent *e);
+static void xkeypress(const Arg *arg);
 static void killclient(const Arg *arg);
 static void manage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
@@ -262,6 +265,8 @@ static void sigdwmblocks(const Arg *arg);
 static void sighup(int unused);
 static void sigterm(int unused);
 static void spawn(const Arg *arg);
+static void delayspawn(const Arg *arg);
+static void redelayspawn(const Arg *arg);
 static void swaptags(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
@@ -286,6 +291,7 @@ static void updatetitle(Client *c);
 static void updatewindowtype(Client *c);
 static void updatewmhints(Client *c);
 static void view(const Arg *arg);
+static void vinormal(const Arg *arg);
 static Client *wintoclient(Window w);
 static Monitor *wintomon(Window w);
 static int xerror(Display *dpy, XErrorEvent *ee);
@@ -312,6 +318,7 @@ static int bh, blw = 0;      /* bar geometry */
 static int lrpad;            /* sum of left and right padding for text */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
+static unsigned int vinormalmode = 0;
 static void (*handler[LASTEvent]) (XEvent *) = {
 	[ButtonPress] = buttonpress,
 	[ClientMessage] = clientmessage,
@@ -1089,7 +1096,16 @@ drawbar(Monitor *m)
 		if (c->isurgent)
 			urg |= c->tags;
 	}
+
 	x = 0;
+	if (vinormalmode) {
+		w = blw = TEXTW("--- NORMAL MODE ---");
+		drw_setscheme(drw, scheme[SchemeTagLnSel]);
+		drw_rect(drw, x + 1, 0, w - 2, 2, 1, 1);
+		drw_setscheme(drw, scheme[SchemeTagsNorm]);
+		x = drw_text(drw, x, 2, w, dbh, lrpad / 2, "--- NORMAL MODE ---", 0);
+	}
+
 	for (i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeTagsSel : SchemeTagsNorm]);
@@ -1417,11 +1433,19 @@ grabkeys(void)
 		KeyCode code;
 
 		XUngrabKey(dpy, AnyKey, AnyModifier, root);
-		for (i = 0; i < LENGTH(keys); i++)
-			if ((code = XKeysymToKeycode(dpy, keys[i].keysym)))
-				for (j = 0; j < LENGTH(modifiers); j++)
-					XGrabKey(dpy, code, keys[i].mod | modifiers[j], root,
-						True, GrabModeAsync, GrabModeAsync);
+		if (vinormalmode) {
+			for (i = 0; i < LENGTH(vikeys); i++)
+				if ((code = XKeysymToKeycode(dpy, vikeys[i].keysym)))
+					for (j = 0; j < LENGTH(modifiers); j++)
+						XGrabKey(dpy, code, vikeys[i].mod | modifiers[j], root,
+							True, GrabModeAsync, GrabModeAsync);
+		} else {
+			for (i = 0; i < LENGTH(keys); i++)
+				if ((code = XKeysymToKeycode(dpy, keys[i].keysym)))
+					for (j = 0; j < LENGTH(modifiers); j++)
+						XGrabKey(dpy, code, keys[i].mod | modifiers[j], root,
+							True, GrabModeAsync, GrabModeAsync);
+		}
 	}
 }
 
@@ -1453,11 +1477,29 @@ keypress(XEvent *e)
 
 	ev = &e->xkey;
 	keysym = XKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0);
-	for (i = 0; i < LENGTH(keys); i++)
-		if (keysym == keys[i].keysym
-		&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
-		&& keys[i].func)
-			keys[i].func(&(keys[i].arg));
+	if (vinormalmode) {
+		for (i = 0; i < LENGTH(vikeys); i++) {
+			if (keysym == vikeys[i].keysym
+			&& CLEANMASK(vikeys[i].mod) == CLEANMASK(ev->state)
+			&& vikeys[i].func)
+				vikeys[i].func(&(vikeys[i].arg));
+		}
+	} else {
+		for (i = 0; i < LENGTH(keys); i++) {
+			if (keysym == keys[i].keysym
+			&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
+			&& keys[i].func)
+				keys[i].func(&(keys[i].arg));
+		}
+	}
+}
+
+void
+xkeypress(const Arg *arg)
+{
+	usleep(DELAY);
+	XTestFakeKeyEvent(dpy, XKeysymToKeycode(dpy, arg->ui), 1, CurrentTime);
+	XTestFakeKeyEvent(dpy, XKeysymToKeycode(dpy, arg->ui), 0, CurrentTime);
 }
 
 void
@@ -2518,6 +2560,13 @@ spawn(const Arg *arg)
 }
 
 void
+delayspawn(const Arg *arg)
+{
+	usleep(DELAY);
+	spawn(arg);
+}
+
+void
 swaptags(const Arg *arg)
 {
 	unsigned int newtag = arg->ui & TAGMASK;
@@ -3094,6 +3143,13 @@ view(const Arg *arg)
 
 	focus(NULL);
 	arrange(selmon);
+}
+
+void
+vinormal(const Arg *arg)
+{
+	vinormalmode = arg->i;
+	grabkeys();
 }
 
 pid_t

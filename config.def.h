@@ -180,6 +180,8 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_y,      spawn,          SHCMD("ytdlclip") },
 	{ MODKEY|ControlMask,           XK_y,      spawn,          SHCMD("youtube-viewer") },
 
+	{ MODKEY,                       XK_i,      spawn,          SHCMD("") },
+
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_p,      spawn,          SHCMD("mpc toggle") },
@@ -193,7 +195,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_a,      gaptog,         {1} },
 	{ MODKEY|ControlMask,           XK_a,      sbtog,          {0} },
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_d,      spawn,          SHCMD("dmenize") },
+	{ MODKEY|ShiftMask,             XK_d,      spawn,          SHCMD("st -e nvim -c DiredHere") },
 	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
 
 	/* bits: [hk/jl], [jk/hl], [withControl] */
@@ -206,11 +208,6 @@ static Key keys[] = {
 	{ MODKEY|ControlMask,           XK_k,      modmove,        {.i = (1 + (0 << 1) + (1 << 2))} },
 	{ MODKEY|ControlMask,           XK_h,      modmove,        {.i = (1 + (1 << 1) + (0 << 2))} },
 	{ MODKEY|ControlMask,           XK_l,      modmove,        {.i = (1 + (1 << 1) + (1 << 2))} },
-
-	{ MODKEY|Mod1Mask|ControlMask,  XK_j,      spawn,          SHCMD("xdotool key Down") },
-	{ MODKEY|Mod1Mask|ControlMask,  XK_k,      spawn,          SHCMD("xdotool key Up") },
-	{ MODKEY|Mod1Mask|ControlMask,  XK_h,      spawn,          SHCMD("xdotool key Left") },
-	{ MODKEY|Mod1Mask|ControlMask,  XK_l,      spawn,          SHCMD("xdotool key Right") },
 
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -256,6 +253,9 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Delete, spawn,          SHCMD("dmenurecord kill") },
 	{ MODKEY,                       XK_Scroll_Lock, spawn,     SHCMD("killall screenkey || screenkey &") },
 
+	{ MODKEY,                       XK_Escape, vinormal,       {.i = 1} },
+	{ MODKEY,                       XK_backslash, vinormal,    {.i = 1} },
+
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	TAGKEYS(                        XK_1,                      0)
@@ -267,6 +267,21 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
+};
+
+static Key vikeys[] = {
+	{ 0,                            XK_i,      vinormal,       {.i = 0} },
+
+	{ 0,                            XK_j,      xkeypress,      {.ui = XK_Down} },
+	{ 0,                            XK_k,      xkeypress,      {.ui = XK_Up} },
+	{ 0,                            XK_h,      xkeypress,      {.ui = XK_Left} },
+	{ 0,                            XK_l,      xkeypress,      {.ui = XK_Right} },
+
+	{ 0,                            XK_o,      delayspawn,     SHCMD("xdotool key End Return") },
+	{ ShiftMask,                    XK_o,      delayspawn,     SHCMD("xdotool keyup Shift; xdotool key Home Return Up; xdotool keydown Shift") },
+
+	{ 0,                            XK_p,      delayspawn,     SHCMD("xdotool keyup Shift; xdotool type i\"$(xclip -selection   primary -o)\"; xdotool keydown Shift") },
+	{ ShiftMask,                    XK_p,      delayspawn,     SHCMD("xdotool keyup Shift; xdotool type i\"$(xclip -selection clipboard -o)\"; xdotool keydown Shift") },
 };
 
 /* button definitions */
