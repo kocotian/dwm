@@ -194,6 +194,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_a,      gaptog,         {0} },
 	{ MODKEY|ShiftMask,             XK_a,      gaptog,         {1} },
 	{ MODKEY|ControlMask,           XK_a,      sbtog,          {0} },
+	{ MODKEY|ShiftMask,             XK_s,      spawn,          SHCMD("st -e scratch") },
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_d,      spawn,          SHCMD("cd ~/.local/symlinks && st -e nvim -c DiredHere") },
 	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
